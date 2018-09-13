@@ -52,22 +52,23 @@ always @(posedge clk)
 			subByte statSub1 (.state(state_0[itr +:32]) , .state_out(state_1[itr +:32]));
 	endgenerate
 	
-	MixColumns M1 (.state(state_1),.clk (clk),.enable(enable), .rst(rst),.state_out(state_2));
+	Shift_Rows Sft1 (.en(enable),.clk(clk),.rst(rst),.Data(state_1),.Shifted_Data(state_2) );
+	MixColumns M1 (.state(state_2),.clk (clk),.enable(enable), .rst(rst),.state_out(state_3));
 	singleKeyExpansion key1 ( .key_0(key),.clk (clk),.enable(enable),.reset (rst),.keyNum (4'h01),.key_Out (key_1));
-	AddRoundKey S1(.key(key_1),.state(state_2),.clk(clk),.rst(rst),.enable(enable),.state_out(state_3),.load(load));
+	AddRoundKey S1(.key(key_1),.state(state_3),.clk(clk),.rst(rst),.enable(enable),.state_out(state_4),.load(load));
 	
 	/* 2nd round */
   genvar itr;
 	generate
 		for (itr = 0 ; itr <= 127; itr = itr+32)
-			subByte statSub2 (.state(state_3[itr +:32]) , .state_out(state_4[itr +:32]));
+			subByte statSub2 (.state(state_4[itr +:32]) , .state_out(state_5[itr +:32]));
 	endgenerate
-	
-	MixColumns M2 (.state(state_4),.clk (clk),.enable(enable), .rst(rst),.state_out(state_5));
-	singleKeyExpansion key2 ( .key_0(key_1),.clk (clk),.enable(enable),.reset (rst),.keyNum (4'h02),.key_Out (key_2));
-	AddRoundKey S1(.key(key_2),.state(state_5),.clk(clk),.rst(rst),.enable(enable),.state_out(state_6),.load(load));
 
-	
+	Shift_Rows Sft2 (.en(enable),.clk(clk),.rst(rst),.Data(state_5),.Shifted_Data(state_6) );	
+	MixColumns M2 (.state(state_7),.clk (clk),.enable(enable), .rst(rst),.state_out(state_8));
+	singleKeyExpansion key2 ( .key_0(key_1),.clk (clk),.enable(enable),.reset (rst),.keyNum (4'h02),.key_Out (key_2));
+	AddRoundKey S2(.key(key_2),.state(state_9),.clk(clk),.rst(rst),.enable(enable),.state_out(state_10),.load(load));
+
 /* And so on .... */	
 	
 	
