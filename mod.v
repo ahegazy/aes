@@ -11,7 +11,7 @@ integer i;
 begin
   con = 9'd283;
   z = x;
-  for (i=14; i>=0; i =i-1)
+  for (i=14; i>=8; i =i-1)
 	 if (z > 8'd255)
 	   begin
 			if(z[i] == 1)
