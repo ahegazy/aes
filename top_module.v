@@ -74,7 +74,7 @@ always @(posedge clk)
 	Shift_Rows Sft1 (.en(en1),.clk(clk),.rst(rst),.Data(state_1),.Shifted_Data(state_2),.done(en2) );
 	MixColumns M1 (.state(state_2),.clk (clk),.enable(en2), .rst(rst),.state_out(state_3),.done(en3));
 
-	singleKeyExpansion key1 ( .key_0(key),.clk (clk),.enable(en3),.reset (rst),.keyNum (4'h1),.key_Out (key_1),.done(en4));
+	singleKeyExpansion key1 ( .keyInput(key),.clk (clk),.enable(en3),.reset (rst),.keyNum (4'h1),.keyOutput(key_1),.done(en4));
 
 	AddRoundKey S1(.key(key_1),.state(state_3),.clk(clk),.rst(rst),.enable(en4),.state_out(state_4),.load(load),.done(en5));
 	
@@ -88,7 +88,7 @@ always @(posedge clk)
 	Shift_Rows Sft2 (.en(en5),.clk(clk),.rst(rst),.Data(state_5),.Shifted_Data(state_6),.done(en6) );	
 	MixColumns M2 (.state(state_6),.clk (clk),.enable(en6), .rst(rst),.state_out(state_7),.done(en7));
 	
-	singleKeyExpansion key2 ( .key_0(key_1),.clk (clk),.enable(en7),.reset (rst),.keyNum (4'h2),.key_Out (key_2),.done(en8));
+	singleKeyExpansion key2 ( .keyInput(key_1),.clk (clk),.enable(en7),.reset (rst),.keyNum (4'h2),.keyOutput(key_2),.done(en8));
 	
 	AddRoundKey S2(.key(key_2),.state(state_7),.clk(clk),.rst(rst),.enable(en8),.state_out(state_8),.load(load),.done(en9));
 	
@@ -101,7 +101,7 @@ always @(posedge clk)
 
 	Shift_Rows Sft3 (.en(en9),.clk(clk),.rst(rst),.Data(state_9),.Shifted_Data(state_10),.done(en10) );	
 	MixColumns M3 (.state(state_10),.clk (clk),.enable(en10), .rst(rst),.state_out(state_11),.done(en11));
-	singleKeyExpansion key3 ( .key_0(key_2),.clk (clk),.enable(en11),.reset (rst),.keyNum (4'h3),.key_Out (key_3),.done(en12));
+	singleKeyExpansion key3 ( .keyInput(key_2),.clk (clk),.enable(en11),.reset (rst),.keyNum (4'h3),.keyOutput(key_3),.done(en12));
 	AddRoundKey S3(.key(key_2),.state(state_11),.clk(clk),.rst(rst),.enable(en12),.state_out(state_12),.load(load),.done(en13));
 	
 	
@@ -114,7 +114,7 @@ always @(posedge clk)
 
 	Shift_Rows Sft4 (.en(en12),.clk(clk),.rst(rst),.Data(state_13),.Shifted_Data(state_14),.done(en13) );	
 	MixColumns M4 (.state(state_14),.clk (clk),.enable(en13), .rst(rst),.state_out(state_15),.done(en14));
-	singleKeyExpansion key4 ( .key_0(key_3),.clk (clk),.enable(en14),.reset (rst),.keyNum (4'h4),.key_Out (key_4),.done(en15));
+	singleKeyExpansion key4 ( .keyInput(key_3),.clk (clk),.enable(en14),.reset (rst),.keyNum (4'h4),.keyOutput(key_4),.done(en15));
 	AddRoundKey S4(.key(key_4),.state(state_15),.clk(clk),.rst(rst),.enable(en15),.state_out(state_16),.load(load),.done(en16));
 	
 	/* 5th round */
@@ -126,7 +126,7 @@ always @(posedge clk)
 
 	Shift_Rows Sft5 (.en(en16),.clk(clk),.rst(rst),.Data(state_17),.Shifted_Data(state_18),.done(en17) );	
 	MixColumns M5 (.state(state_18),.clk (clk),.enable(en17), .rst(rst),.state_out(state_19),.done(en18));
-	singleKeyExpansion key5 ( .key_0(key_4),.clk (clk),.enable(en18),.reset (rst),.keyNum (4'h5),.key_Out (key_5),.done(en19));
+	singleKeyExpansion key5 ( .keyInput(key_4),.clk (clk),.enable(en18),.reset (rst),.keyNum (4'h5),.keyOutput(key_5),.done(en19));
 	AddRoundKey S5(.key(key_5),.state(state_19),.clk(clk),.rst(rst),.enable(en19),.state_out(state_20),.load(load),.done(en20));
 	
 	/* 6th round */
@@ -138,7 +138,7 @@ always @(posedge clk)
 
 	Shift_Rows Sft6 (.en(en20),.clk(clk),.rst(rst),.Data(state_21),.Shifted_Data(state_22),.done(en21) );	
 	MixColumns M6 (.state(state_22),.clk (clk),.enable(en21), .rst(rst),.state_out(state_23),.done(en22));
-	singleKeyExpansion key6 ( .key_0(key_5),.clk (clk),.enable(en22),.reset (rst),.keyNum (4'h6),.key_Out (key_6),.done(en23));
+	singleKeyExpansion key6 ( .keyInput(key_5),.clk (clk),.enable(en22),.reset (rst),.keyNum (4'h6),.keyOutput(key_6),.done(en23));
 	AddRoundKey S6(.key(key_6),.state(state_23),.clk(clk),.rst(rst),.enable(en23),.state_out(state_24),.load(load),.done(en24));
 	
 	/* 7th round */
@@ -150,7 +150,7 @@ always @(posedge clk)
 
 	Shift_Rows Sft7 (.en(en24),.clk(clk),.rst(rst),.Data(state_25),.Shifted_Data(state_26),.done(en25) );	
 	MixColumns M7 (.state(state_26),.clk (clk),.enable(en25), .rst(rst),.state_out(state_27),.done(en26));
-	singleKeyExpansion key7 ( .key_0(key_6),.clk (clk),.enable(en26),.reset (rst),.keyNum (4'h7),.key_Out (key_7),.done(en27));
+	singleKeyExpansion key7 ( .keyInput(key_6),.clk (clk),.enable(en26),.reset (rst),.keyNum (4'h7),.keyOutput(key_7),.done(en27));
 	AddRoundKey S7(.key(key_7),.state(state_27),.clk(clk),.rst(rst),.enable(en27),.state_out(state_28),.load(load),.done(en28));
 	
 	/* 8th round */
@@ -162,7 +162,7 @@ always @(posedge clk)
 
 	Shift_Rows Sft8 (.en(en28),.clk(clk),.rst(rst),.Data(state_29),.Shifted_Data(state_30),.done(en29) );	
 	MixColumns M8 (.state(state_30),.clk (clk),.enable(en29), .rst(rst),.state_out(state_31),.done(en30));
-	singleKeyExpansion key8 ( .key_0(key_7),.clk (clk),.enable(en30),.reset (rst),.keyNum (4'h8),.key_Out (key_8),.done(en31));
+	singleKeyExpansion key8 ( .keyInput(key_7),.clk (clk),.enable(en30),.reset (rst),.keyNum (4'h8),.keyOutput(key_8),.done(en31));
 	AddRoundKey S8(.key(key_8),.state(state_31),.clk(clk),.rst(rst),.enable(en31),.state_out(state_32),.load(load),.done(en32));
 	
 	/* 9th round */
@@ -174,7 +174,7 @@ always @(posedge clk)
 
 	Shift_Rows Sft9 (.en(en32),.clk(clk),.rst(rst),.Data(state_33),.Shifted_Data(state_34),.done(en33) );	
 	MixColumns M9 (.state(state_34),.clk (clk),.enable(en33), .rst(rst),.state_out(state_35),.done(en34));
-	singleKeyExpansion key9 ( .key_0(key_8),.clk (clk),.enable(en34),.reset (rst),.keyNum (4'h9),.key_Out (key_9),.done(en35));
+	singleKeyExpansion key9 ( .keyInput(key_8),.clk (clk),.enable(en34),.reset (rst),.keyNum (4'h9),.keyOutput(key_9),.done(en35));
 	AddRoundKey S9(.key(key_9),.state(state_35),.clk(clk),.rst(rst),.enable(en35),.state_out(state_36),.load(load),.done(en36));
 	
 	/* 10th round */
@@ -185,7 +185,7 @@ always @(posedge clk)
 	endgenerate
 
 	Shift_Rows Sft10 (.en(en36),.clk(clk),.rst(rst),.Data(state_37),.Shifted_Data(state_38),.done(en37) );	
-	singleKeyExpansion key10 ( .key_0(key_9),.clk (clk),.enable(en37),.reset (rst),.keyNum (4'ha),.key_Out (key_10),.done(en38));
+	singleKeyExpansion key10 ( .keyInput(key_9),.clk (clk),.enable(en37),.reset (rst),.keyNum (4'ha),.keyOutput(key_10),.done(en38));
 	AddRoundKey S10(.key(key_10),.state(state_38),.clk(clk),.rst(rst),.enable(en38),.state_out(state_39),.load(load),.done(en39));	
 	
 	
