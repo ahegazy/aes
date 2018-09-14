@@ -1,7 +1,7 @@
 module AddRoundKey
 	#(parameter word_size =8 ,array_size =16)(
-	input reg [word_size*array_size-1:0] key ,
-	input reg [word_size*array_size-1:0] state,
+	input wire [word_size*array_size-1:0] key ,
+	input wire [word_size*array_size-1:0] state,
 	input  clk,enable, rst, load,
 	output reg  [word_size*array_size-1:0]state_out,
 	output reg done);
