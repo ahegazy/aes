@@ -1,7 +1,7 @@
 module Inv_Shift_Rows 
  #(parameter word_size =8 ,array_size =16)(
   input en,clk,rst,
-  input  reg  [0:word_size*array_size-1] Shifted_Data,
+  input  wire [0:word_size*array_size-1] Shifted_Data,
 	output reg  [0:word_size*array_size-1] Inv_Shifted_Data );
   
   reg [word_size-1:0] shifted_data [0:3] [0:3];
@@ -60,4 +60,3 @@ always @(posedge clk)
 		   
   
 endmodule
-
