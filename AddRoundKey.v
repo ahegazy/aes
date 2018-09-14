@@ -3,7 +3,8 @@ module AddRoundKey
 	input reg [word_size*array_size-1:0] key ,
 	input reg [word_size*array_size-1:0] state,
 	input  clk,enable, rst, load,
-	output reg  [word_size*array_size-1:0]state_out);
+	output reg  [word_size*array_size-1:0]state_out,
+	output reg done);
 integer i,j,k,add;
 
 `include "mod.v"
@@ -17,8 +18,6 @@ always@(posedge clk)
  end 
  else if (enable) begin 
  
-	if (load==0)
-	begin
 	for (j=0; j<=15; j=j+1)
 		if 		(j>=0  & j<=3 )
 			begin
@@ -49,7 +48,7 @@ for ( i=0; i<=15; i=i+1)
 		Mod(key_modified[i*word_size  +:  word_size] ^ state[i*word_size  +:  word_size],state_out[i*word_size  +:  word_size]);
 ////////////////////////////////////////////////
 $display ("%h", key_modified);
-end
+	done = 1;
 end
 end
 endmodule

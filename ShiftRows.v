@@ -2,7 +2,8 @@ module Shift_Rows
  #(parameter word_size =8 ,array_size =16)(
   input en,clk,rst,
   input  reg  [0:word_size*array_size-1] Data,
-	output reg  [0:word_size*array_size-1] Shifted_Data );
+	output reg  [0:word_size*array_size-1] Shifted_Data,
+	output reg done );
   
   reg [word_size-1:0] data [0:3] [0:3];
   reg [word_size-1:0] shifted_data[0:3] [0:3];
@@ -12,8 +13,11 @@ module Shift_Rows
 always @(posedge clk)
   begin
     if (rst)
+		begin
       //for ( i=0; i<=word_size*array_size-1; i=i+1)
 	       Shifted_Data = 128'b0;
+				 done = 0;
+		end
   else if (en) begin
     for ( i=0; i<=3; i=i+1)
 	   for ( j=0; j<=3; j=j+1)
@@ -57,6 +61,7 @@ always @(posedge clk)
 	       	Shifted_Data[ij*word_size  +:  word_size]=shifted_data[j][i];
 		    end
 		    end	
+		done = 1;
 	 end
 		   
   

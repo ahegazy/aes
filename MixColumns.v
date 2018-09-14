@@ -3,7 +3,8 @@ module MixColumns
 	(
 	input reg [word_size*array_size-1:0] state,
 	input  clk,enable, rst,
-	output reg  [word_size*array_size-1:0]state_out);
+	output reg  [word_size*array_size-1:0]state_out,
+	output reg done);
 
 	integer i,j,ij,k;
 
@@ -15,6 +16,7 @@ module MixColumns
 `include "FiniteMultiplication.v"
 `include "mod.v"
 
+/* 128 bit state to 2D */
 	always@(state)
 begin
 for ( i=0; i<=3; i=i+1)
@@ -51,6 +53,7 @@ begin
 state_out=128'd0;
 temp_mul=14'd0;
 temp_mod=14'd0;
+done = 0;
 end 
 else if (enable)
 
@@ -81,6 +84,6 @@ for ( i=0; i<=3; i=i+1)
 		state_out[ij*word_size  +:  word_size]=state_out_2D[j][i];
 		end	
 				$display ("state_out = %h",state_out);
-
+			done = 1;
 end 
 endmodule
