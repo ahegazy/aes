@@ -36,25 +36,10 @@ always @(posedge clk)
 			load<=1'd0;
 			ready<=1'd0;
 			i <= 128;
-			state_out_byte <= 8'h00;
-			j <= 0; 
 		end 
 		else if (enable) 
 		begin
 			
-
-	/* state_39 to bytes to out  + ready signal  @ en39 = 1 ..  */
-			
-		if(en39)
-		begin
-			if ( j < 128)
-			begin 
-				ready <= 1; 
-				state_out_byte <= state_39 [j +: 8]; 
-				j <= j + 8;
-			end
-			else 
-				ready <= 0;
 //Bytes to vector// 
 /////////////////////////
 			if (i>0) begin
@@ -68,13 +53,9 @@ always @(posedge clk)
 				begin 
 				load=1'd0;
 				en0 = 1;
-				end 
-	/////////////////
-//Add Round key//
-
+				end
 
 		end 
-	end 
 	end 
 
 
@@ -208,7 +189,7 @@ always @(posedge clk)
 	
 	/* state_39 to bytes to out  + ready signal  @ en39 = 1 ..  */
 
-		/*always @(posedge clk)
+		always @(posedge clk)
 		begin 
 			if (rst) 
 			begin
@@ -229,7 +210,7 @@ always @(posedge clk)
 						ready <= 0;
 				end 
 			end 
-		end */
+		end 
 endmodule
 
 	

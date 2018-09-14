@@ -34,6 +34,7 @@ always @(posedge clk)
 				keyOutput[95:64] = keyInput[95:64] ^ keyOutput[127:96];
 				keyOutput[63:32] = keyInput[63:32] ^ keyOutput[95:64];
 				keyOutput[31:0] = keyInput[31:0] ^ keyOutput[63:32];
+				done = 1;
 			end
 	end 
 end
