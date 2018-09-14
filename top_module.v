@@ -19,7 +19,7 @@ output reg load,ready
 	/* enable wires */
 	reg en0;
 	wire en1,en2,en3,en4,en5,en6,en7,en8,en9,en10,en11,en12,en13,en14,en15,en16,en17,en18,en19,en20; 
-	wire en21,en22,en23,en24,en25,en26,en27,en28,en29,en30,en31,en32,en33,en34,en35,en36,en37,en38; 
+	wire en21,en22,en23,en24,en25,en26,en27,en28,en29,en30,en31,en32,en33,en34,en35,en36,en37,en38,en39; 
 	
 initial 
 begin 
@@ -74,6 +74,7 @@ always @(posedge clk)
 
 
 		end 
+	end 
 	end 
 
 
