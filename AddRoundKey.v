@@ -24,7 +24,7 @@ always@(posedge clk)
 			k=0;
 			add=k+j*3;
 			key_modified[j*word_size  +:  word_size]=key[(j+add)*word_size  +:  word_size];
-			$display("%d , %d ,%d, %h", add, (j+add), j, key[(j+add)*word_size  +:  word_size]); end 
+			end 
 		else if (j>=4  & j<=7 ) 
 			begin
 			k=-3;
@@ -36,18 +36,17 @@ always@(posedge clk)
 			k=-6;
 			add=k+(j-8)*3;
 			key_modified[j*word_size  +:  word_size]=key[(j+add)*word_size  +:  word_size];	
-			$display("%d , %d, %d, %h", add, (j+add),j, key[(j+add)*word_size  +:  word_size]); end 
+			end 
 		else if (j>=12 & j<=15)
 			begin
 			k=-9;
 			add=k+(j-12)*3;
 			key_modified[j*word_size  +:  word_size]=key[(j+add)*word_size  +:  word_size];
-			$display("%d ,%d,%d, %h", add, (j+add),j, key[(j+add)*word_size  +:  word_size]); end 
+			end 
 		else $display("CASE ERROR");		
 for ( i=0; i<=15; i=i+1)
 		Mod(key_modified[i*word_size  +:  word_size] ^ state[i*word_size  +:  word_size],state_out[i*word_size  +:  word_size]);
 ////////////////////////////////////////////////
-$display ("%h", key_modified);
 	done = 1;
 end
 end

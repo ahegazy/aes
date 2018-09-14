@@ -13,7 +13,7 @@ module MixColumns
   reg [word_size-1:0] trans_matrix[0:3] [0:3];	
   reg [14:0] temp_mul,temp_mod;
   
-`include "FiniteMultiplication.v"
+`include "FiniteMulti.v"
 `include "mod.v"
 
 /* 128 bit state to 2D */
@@ -24,7 +24,6 @@ for ( i=0; i<=3; i=i+1)
 		begin
 		ij=15-(i*4+j);
 		state_2D[j][i]=state[ij*word_size  +:  word_size];
-		$display("state_2D[%d][%d]=%h,  state[%d]=%h",j,i, state_2D[j][i],ij, state[ij*word_size  +:  word_size]);
 		end	
 
 
@@ -67,7 +66,6 @@ else if (enable)
 			temp_mod = temp_mod ^ temp_mul;
 			Mod(temp_mod,state_out_2D[i][j]);
 			end
-			$display ("state_out_2D[%d][%d] = %h",i,j,state_out_2D[i][j]);
 			end
 			end 
 
@@ -80,7 +78,6 @@ for ( i=0; i<=3; i=i+1)
 		ij=15-(i*4+j);
 		state_out[ij*word_size  +:  word_size]=state_out_2D[j][i];
 		end	
-				$display ("state_out = %h",state_out);
 			done = 1;
 end 
 endmodule
