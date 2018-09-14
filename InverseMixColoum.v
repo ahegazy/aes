@@ -1,7 +1,7 @@
 module InverseMixColumns
 	#(parameter word_size =8 ,array_size =16)
 	(
-	input reg [word_size*array_size-1:0] state,
+	input wire [word_size*array_size-1:0] state,
 	input  clk,enable, rst,
 	output reg  [word_size*array_size-1:0]state_out);
 
@@ -15,7 +15,8 @@ module InverseMixColumns
 `include "FiniteMultiplication.v"
 `include "mod.v"
 
-	always@(state)
+		always@(posedge clk) 
+begin
 for ( i=0; i<=3; i=i+1)
 	for ( j=0; j<=3; j=j+1)
 		begin
@@ -26,8 +27,7 @@ for ( i=0; i<=3; i=i+1)
 
 
 
-	always@(posedge clk) 
-begin
+
 
 inv_trans_matrix[0][0]=8'd14;
 inv_trans_matrix[0][1]=8'd11;
@@ -70,11 +70,10 @@ else if (enable)
 			$display ("state_out_2D[%d][%d] = %h",i,j,state_out_2D[i][j]);
 			end
 			end 
-end
+
 
 //2D to 1D
-	always@(state_out_2D) 
-begin
+
 for ( i=0; i<=3; i=i+1) 
 	for ( j=0; j<=3; j=j+1)
 		begin
