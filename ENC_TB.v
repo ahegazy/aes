@@ -59,7 +59,7 @@ endtask
 reg [127:0] full_key,full_state;
 integer i;
 
-always @(posedge clk)
+always @(negedge clk)
 begin 
 	if ( enable && (i > 0) )
 	begin 
@@ -72,8 +72,20 @@ end
 
 initial 
 begin 
+/*
+		 // 16 cycle  key = 54 68 61 74 73 20 6D 79 20 4B 75 6E 67 20 46 75 
+				// ;data = 54 77 6F 20 4F 6E 65 20 4E 69 6E 65 20 54 77 6F 
+				
+									 54 77 6F 20
+									 4F 6E 65 20
+									 4E 69 6E 65
+									 20 54 77 6F 
+*/
 	full_key <= 128'h5468617473206D79204B756E67204675;
 	full_state <= 128'h54776F204F6E65204E696E652054776F;
+
+	// full_state <= 128'h544f4e20776e69546f656e772020656; /* stream of columns .. */
+
   i <= 127;
 	#1 reset();
 end
@@ -83,13 +95,11 @@ end
 task send_DataKey();
 begin 
 
-		 // 16 cycle  key = 54 68 61 74 73 20 6D 79 20 4B 75 6E 67 20 46 75 
-				// ;data = 54 77 6F 20 4F 6E 65 20 4E 69 6E 65 20 54 77 6F 
-	  key_byte = 8'h54;
-		state_byte = 8'h54;
+	  key_byte = 8'h00;
+		state_byte = 8'h00;
 		#2; // wait clock;
 		
-	  key_byte = 8'h68;
+	  key_byte = 8'h00;
 		state_byte = 8'h00;
 		#2; // wait clock;
 
