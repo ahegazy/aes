@@ -24,6 +24,7 @@ always @(posedge clk)
  begin
 	if ( reset == 1 )
 	begin 
+		done <= 0;
 		/* donothing */
 	end 
 	else 

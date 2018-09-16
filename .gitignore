@@ -107,3 +107,9 @@ work/sub@byte_inv/verilog.psm
 vsim.wlf
 aes.mpf
 aes.cr.mti
+*.zip
+work/*
+team1/*
+work
+team1
+topmodlot.txt
