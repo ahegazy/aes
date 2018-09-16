@@ -41,16 +41,16 @@ always @(posedge clk)
 //Bytes to vector// 
 /////////////////////////
 			if (i>0) begin
-				load=1'd1;
-				key[i-1 -: 8]=key_byte;
-				state[i-1 -: 8]=state_byte;
+				load<=1'd1;
+				key[i-1 -: 8]<=key_byte;
+				state[i-1 -: 8]<=state_byte;
 				$display ("%b", key);
-				i=i-8;
+				i<=i-8;
 			end 
 			else  
 				begin 
-				load=1'd0;
-				en0 = 1;
+				load<=1'd0;
+				en0 <= 1;
 				end
 
 		end 
