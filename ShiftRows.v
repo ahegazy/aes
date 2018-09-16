@@ -54,14 +54,14 @@ always @(posedge clk)
            end
         end 
  
-    for ( i=0; i<=3; i=i+1)
-	    for ( j=0; j<=3; j=j+1)
-	      begin 
-	        ij =((4*i)+j);
-	       	Shifted_Data[ij*word_size  +:  word_size]=shifted_data[j][i];
-		    end
+						for ( i=0; i<=3; i=i+1)
+							for ( j=0; j<=3; j=j+1)
+								begin 
+									ij =((4*i)+j);
+									Shifted_Data[ij*word_size  +:  word_size]=shifted_data[j][i];
+								end
+					done = 1;
 		    end	
-		done = 1;
 	 end
 		   
   

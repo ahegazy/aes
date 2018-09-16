@@ -19,6 +19,16 @@ module MixColumns
 /* 128 bit state to 2D */
 	always@(posedge clk) 
 begin
+if (rst)
+begin
+state_out<=128'd0;
+temp_mul<=14'd0;
+temp_mod<=14'd0;
+done <= 0;
+end 
+else if (enable)
+
+ begin 
 for ( i=0; i<=3; i=i+1)
 	for ( j=0; j<=3; j=j+1)
 		begin
@@ -45,16 +55,6 @@ trans_matrix[3][0]=8'd3;
 trans_matrix[3][1]=8'd1;
 trans_matrix[3][2]=8'd1;
 trans_matrix[3][3]=8'd2;
-if (rst)
-begin
-state_out=128'd0;
-temp_mul=14'd0;
-temp_mod=14'd0;
-done = 0;
-end 
-else if (enable)
-
- begin 
 
  for(i=0;i <=3;i=i+1)
 	for(j=0;j <=3;j=j+1)
@@ -67,17 +67,22 @@ else if (enable)
 			Mod(temp_mod,state_out_2D[i][j]);
 			end
 			end
-			end 
+	
+	//2D to 1D
+
+	for ( i=0; i<=3; i=i+1) 
+		for ( j=0; j<=3; j=j+1)
+			begin
+				ij=15-(i*4+j);
+				state_out[ij*word_size  +:  word_size]=state_out_2D[j][i];
+				end	
+			
+	
+	done = 1;
+	
+	end 
 
 
-//2D to 1D
 
-for ( i=0; i<=3; i=i+1) 
-	for ( j=0; j<=3; j=j+1)
-		begin
-		ij=15-(i*4+j);
-		state_out[ij*word_size  +:  word_size]=state_out_2D[j][i];
-		end	
-			done = 1;
 end 
 endmodule
