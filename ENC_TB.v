@@ -90,86 +90,12 @@ begin
 	#1 reset();
 end
 
-/*
-
-task send_DataKey();
-begin 
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-		
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-		
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
-
-	  key_byte = 8'h00;
-		state_byte = 8'h00;
-		#2; // wait clock;
- end
-endtask 
-*/
-
 initial
 begin 
   @(reset_done)
   begin
 	#2;
 		enable = 1;
-//		send_DataKey;
-		//#10;
 		@(ready) 
 			begin 
 				#35;
