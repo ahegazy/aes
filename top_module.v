@@ -34,6 +34,9 @@ always @(posedge clk)
 			ready<=1'd0;
 			i <= 128;
 			en0<= 0;
+			state_out_byte <= 8'h00;
+			j <= 0; 
+
 		end 
 		else if (enable) 
 		begin
@@ -52,6 +55,20 @@ always @(posedge clk)
 				load<=1'd0;
 				en0 <= 1;
 				end
+/* vector to bytes*/
+		// state_39 to bytes to out  + ready signal  @ en40 = 1 ..  
+
+	if(en40)
+				begin
+					if ( j < 128)
+					begin 
+						ready <= 1; 
+						state_out_byte <= state_39 [j +: 8]; 
+						j <= j + 8;
+					end
+					else 
+						ready <= 0;
+				end 
 
 		end 
 	end 
@@ -196,32 +213,6 @@ always @(posedge clk)
 	Shift_Rows Sft10 (.en(en37),.clk(clk),.rst(rst),.Data(state_37),.Shifted_Data(state_38),.done(en38) );	
 	singleKeyExpansion key10 ( .keyInput(key_9),.clk (clk),.enable(en38),.reset (rst),.keyNum (4'ha),.keyOutput(key_10),.done(en39));
 	AddRoundKey S10(.key(key_10),.state(state_38),.clk(clk),.rst(rst),.enable(en39),.state_out(state_39),.load(load),.done(en40));	
-
-		// state_39 to bytes to out  + ready signal  @ en40 = 1 ..  
-
-		always @(posedge clk)
-		begin 
-			if (rst) 
-			begin
-				state_out_byte <= 8'h00;
-				j <= 0; 
-			end 
-			else if (enable) 
-			begin
-				if(en40)
-				begin
-					if ( j < 128)
-					begin 
-						ready <= 1; 
-						state_out_byte <= state_39 [j +: 8]; 
-						j <= j + 8;
-					end
-					else 
-						ready <= 0;
-				end 
-			end 
-		end 
-
 
 /***************************************************/
 	/*	
