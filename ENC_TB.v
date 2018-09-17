@@ -84,7 +84,7 @@ begin
 	full_key <= 128'h5468617473206D79204B756E67204675;
 	full_state <= 128'h54776F204F6E65204E696E652054776F;
 
-	// full_state <= 128'h544f4e20776e69546f656e772020656; /* stream of columns .. */
+	// full_state <= 128'h544f4e20776e69546f656e772020656F; /* stream of columns .. */
 
   i <= 127;
 	#1 reset();
