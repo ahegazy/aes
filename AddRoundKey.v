@@ -13,7 +13,6 @@ always@(posedge clk)
  begin
  if (rst) begin
  state_out=128'd0;
- key_modified=128'd0;
  done <= 0;
  end 
  else if (enable) begin 
