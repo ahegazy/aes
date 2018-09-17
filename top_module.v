@@ -111,7 +111,7 @@ always @(posedge clk)
 	Shift_Rows Sft3 (.en(en9),.clk(clk),.rst(rst),.Data(state_9),.Shifted_Data(state_10),.done(en10) );	
 	MixColumns M3 (.state(state_10),.clk (clk),.enable(en10), .rst(rst),.state_out(state_11),.done(en11));
 	singleKeyExpansion key3 ( .keyInput(key_2),.clk (clk),.enable(en11),.reset (rst),.keyNum (4'h3),.keyOutput(key_3),.done(en12));
-	AddRoundKey S3(.key(key_2),.state(state_11),.clk(clk),.rst(rst),.enable(en12),.state_out(state_12),.load(load),.done(en13));
+	AddRoundKey S3(.key(key_3),.state(state_11),.clk(clk),.rst(rst),.enable(en12),.state_out(state_12),.load(load),.done(en13));
 	
 	
 	/* 4th round */
