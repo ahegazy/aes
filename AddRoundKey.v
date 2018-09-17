@@ -8,7 +8,6 @@ module AddRoundKey
 integer i,j,k,add;
 
 `include "mod.v"
-reg [word_size*array_size-1:0]key_modified;
 
 always@(posedge clk)
  begin
