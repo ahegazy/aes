@@ -10,6 +10,20 @@ output reg load,ready
 	reg [127:0] key, state; /* input */
 	reg en0;
 
+	
+	wire [127:0] key_1,key_2,key_3,key_4,key_5,key_6,key_7,key_8,key_9,key_10; /* key stages */
+	/* states */
+	wire [127:0]state_0,state_1,state_2,state_3,state_4,state_5,state_6,state_7,state_8,state_9;
+	wire [127:0]state_10,state_11,state_12,state_13,state_14,state_15,state_16,state_17,state_18,state_19;
+	wire [127:0]state_20,state_21,state_22,state_23,state_24,state_25,state_26,state_27,state_28,state_29;
+	wire [127:0]state_30,state_31,state_32,state_33,state_34,state_35,state_36,state_37,state_38,state_39;
+
+	/* enable wires */
+	// reg en0;
+	wire en1,en2,en3,en4,en5,en6,en7,en8,en9,en10,en11,en12,en13,en14,en15,en16,en17,en18,en19,en20; 
+	wire en21,en22,en23,en24,en25,en26,en27,en28,en29,en30,en31,en32,en33,en34,en35,en36,en37,en38,en39,en40; 
+	/****************************************************/
+
 /*
 	
 //	 To generate 
@@ -18,6 +32,7 @@ output reg load,ready
 	wire [40:1] en;
 	wire [3:0] keyNum;
 */	
+
 initial 
 begin 
 	i=128;
@@ -72,19 +87,6 @@ always @(posedge clk)
 
 		end 
 	end 
-
-	wire [127:0] key_1,key_2,key_3,key_4,key_5,key_6,key_7,key_8,key_9,key_10; /* key stages */
-	/* states */
-	wire [127:0]state_0,state_1,state_2,state_3,state_4,state_5,state_6,state_7,state_8,state_9;
-	wire [127:0]state_10,state_11,state_12,state_13,state_14,state_15,state_16,state_17,state_18,state_19;
-	wire [127:0]state_20,state_21,state_22,state_23,state_24,state_25,state_26,state_27,state_28,state_29;
-	wire [127:0]state_30,state_31,state_32,state_33,state_34,state_35,state_36,state_37,state_38,state_39;
-
-	/* enable wires */
-	// reg en0;
-	wire en1,en2,en3,en4,en5,en6,en7,en8,en9,en10,en11,en12,en13,en14,en15,en16,en17,en18,en19,en20; 
-	wire en21,en22,en23,en24,en25,en26,en27,en28,en29,en30,en31,en32,en33,en34,en35,en36,en37,en38,en39,en40; 
-	/****************************************************/
 
 	AddRoundKey S0(.key(key),.state(state),.clk(clk),.rst(rst),.enable(en0),.state_out(state_0),.load(load),.done(en1));
 
