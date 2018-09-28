@@ -1,7 +1,7 @@
 module AES_encryption
 (
 input [7:0] key_byte, state_byte,
-input reg clk,rst,enable, 
+input clk,rst,enable, 
 output reg [7:0] state_out_byte,
 output reg load,ready
 );
