@@ -20,7 +20,9 @@ always@(posedge clk)
 		Mod(key[i*word_size  +:  word_size] ^ state[i*word_size  +:  word_size],state_out[i*word_size  +:  word_size]);
 ////////////////////////////////////////////////
 	done = 1;
-end
+end 
+			else done <= 0;
+
 end
 endmodule
 

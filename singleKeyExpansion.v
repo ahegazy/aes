@@ -37,6 +37,7 @@ always @(posedge clk)
 				keyOutput[31:0] = keyInput[31:0] ^ keyOutput[63:32];
 				done = 1;
 			end
+			else done <= 0;
 	end 
 end
  endmodule

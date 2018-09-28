@@ -62,7 +62,8 @@ always @(posedge clk)
 								end
 					done = 1;
 		    end	
-	 end
+	 			else done <= 0;
+end
 		   
   
 endmodule

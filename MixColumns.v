@@ -81,6 +81,8 @@ trans_matrix[3][3]=8'd2;
 	done = 1;
 	
 	end 
+	else done <= 0;
+
 
 
 
