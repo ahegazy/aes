@@ -10,7 +10,7 @@ output reg load,ready
 	reg [1:0] fsmCount;
 	reg [127:0] key, state; /* input */
 	reg enRound,enShft,enMx,enKy;
-	wire fRound,fshft,fMx,fKy;
+	wire fRound,fshft,fMx;
 	reg  finish;
 	reg [127:0] state_transI,state_transO;
 	reg [127:0] key_transI;
@@ -29,7 +29,7 @@ output reg load,ready
 	Shift_Rows Sft (.en(enShft),.clk(clk),.rst(rst),.Data(state_subByteO),.Shifted_Data(state_ShiftO),.done(fshft) );
 	MixColumns M (.state(state_transI),.clk (clk),.enable(enMx), .rst(rst),.state_out(state_MixO),.done(fMx));
 
-	singleKeyExpansion k ( .keyInput(key_transI),.clk (clk),.enable(enKy),.reset (rst),.keyNum (keyNum),.keyOutput(key_transO),.done(fKy));
+	singleKeyExpansion k ( .keyInput(key_transI),.clk (clk),.enable(enKy),.reset (rst),.keyNum (keyNum),.keyOutput(key_transO));
 
 initial 
 begin 

@@ -4,8 +4,7 @@ module singleKeyExpansion(
 	input enable,
 	input reset,
 	input [3:0] keyNum,
-  output  reg [127:0] keyOutput,
-	output reg done);
+  output  reg [127:0] keyOutput);
   
 	reg [31:0] stp1 ;
   wire [31:0] stp2 ;
@@ -35,9 +34,7 @@ always @(posedge clk)
 				keyOutput[95:64] = keyInput[95:64] ^ keyOutput[127:96];
 				keyOutput[63:32] = keyInput[63:32] ^ keyOutput[95:64];
 				keyOutput[31:0] = keyInput[31:0] ^ keyOutput[63:32];
-				done = 1;
 			end
-			else done <= 0;
 	end 
 end
  endmodule
