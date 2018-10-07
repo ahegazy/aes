@@ -8,11 +8,10 @@
 * Language: Verilog
 *
 */
-module Shift_Rows 
- #(parameter word_size =8 ,array_size =16)(
+module Shift_Rows (
   input en,clk,rst,
-  input  wire  [0:word_size*array_size-1] Data,
-	output reg  [0:word_size*array_size-1] Shifted_Data,
+  input  wire  [0:127] Data,
+	output reg  [0:127] Shifted_Data,
 	output reg done );
 	
 
@@ -24,17 +23,6 @@ always @(posedge clk)
 				 done = 0;
 		end
   else if (en) begin
-			/*      
-							 0    8    16     24 
-							 32		40   48     56
-							 64   72   80     88
-							 96   104  112    120
-
-							 0    40    80     120
-							 32		72    112    24 
-							 64   104   16     56
-							 96   8    48    88
-*/
 		/* in the DATA .. the arranging is columns filled 1st  ._. */
 		/* column 0 no change */
 		Shifted_Data[0+:8] <= Data[0+:8];

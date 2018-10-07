@@ -9,13 +9,11 @@
 *
 */
 
-module MixColumns
-	#(parameter word_size =8 ,array_size =16)
-	(
-	input wire [word_size*array_size-1:0] state,
+module MixColumns(
+	input wire [127:0] state,
 	input  clk,enable, rst,
-	output reg  [word_size*array_size-1:0]state_out,
-	output reg  [word_size*array_size-1:0]state_out2,
+	output reg  [127:0]state_out,
+	output reg  [127:0]state_out2,
 	output reg done);
 
 function reg [7:0] MultiplyByTwo;

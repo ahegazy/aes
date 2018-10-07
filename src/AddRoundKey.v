@@ -4,19 +4,20 @@
 *						Dina  Elsokary <github.com/dinaelsokary>
 *
 * Contributer: Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
-*	Date: September 2018
-* 
+*
+* Date: September 2018
+* Modified : October 2018
+*
 * Description: AddRoundKey step in AES encryption/Decryption.
 * Language: Verilog
 *
 */
 
-module AddRoundKey
-	#(parameter word_size =8 ,array_size =16)(
-	input wire [word_size*array_size-1:0] key ,
-	input wire [word_size*array_size-1:0] state,
+module AddRoundKey(
+	input wire [127:0] key ,
+	input wire [127:0] state,
 	input  clk,enable, rst,
-	output reg  [word_size*array_size-1:0]state_out,
+	output reg  [127:0]state_out,
 	output reg done);
 
 	integer i;
@@ -29,7 +30,7 @@ always@(posedge clk)
  end 
  else if (enable) begin 
 	for ( i=0; i<=15; i=i+1)
-			state_out[i*word_size  +:  word_size] <= key[i*word_size  +:  word_size] ^ state[i*word_size  +:  word_size];
+			state_out[i*8  +:  8] <= key[i*8  +:  8] ^ state[i*8  +:  8];
 
 	done = 1;
 	end 
