@@ -12,6 +12,7 @@
 class AES_ENC;
 
 	reg [127:0] state,key;
+	reg [127:0] state_out;
 	protected bit [7:0] state_2d [3:0] [3:0]; 
 	protected bit [7:0] key_2d [3:0] [3:0];
 	
@@ -35,6 +36,19 @@ class AES_ENC;
 		/* polynomial matrix */
 		this.polymat = {{ 8'h02,8'h03,8'h01,8'h01} , {8'h01,8'h02,8'h03,8'h01} , {8'h01,8'h01,8'h02,8'h03} , {8'h03,8'h01,8'h01,8'h02}};
 		/**/
+	endfunction
+	
+	
+	
+	function void finish();
+			int i,j,ij;
+		/* convert 2 Dimensions to 1 Dimension*/
+		for (i=0;i<=3;i=i+1)
+			for(j=0;j<=3;j=j+1)
+				begin 
+					ij = (i*4+j)*8;
+					this.state_out[ij+: 8] = this.state_2d[i][j];
+				end
 	endfunction
 	
 		protected function bit [14:0] finite_multiplication(bit [7:0] A,bit [7:0] B);			
@@ -87,6 +101,42 @@ class AES_ENC;
 					end
 							$display("ij:%d,%d ,state: %x ",i,j,mix_out_2d[i][j]);
 			end 
+			endfunction
+
+
+	function void ShiftRows ();//	bit [7:0] state_2d [3:0] [3:0]
+		int i,j;
+		automatic bit [7:0] shift_out_2d [3:0] [3:0];
+
+		for ( i=0; i<=3; i=i+1)
+	    for ( j=0; j<=3; j=j+1)
+	     begin
+	      if (i ==0)
+	         shift_out_2d[i][j] = this.state_2d[i][j];
+	      else if (i ==1)
+	        begin
+	         shift_out_2d[1][0] = this.state_2d[1][1];
+           shift_out_2d[1][1] = this.state_2d[1][2];
+           shift_out_2d[1][2] = this.state_2d[1][3];
+           shift_out_2d[1][3] = this.state_2d[1][0];
+          end
+         else if (i ==2)
+           begin
+	          shift_out_2d[2][0] = this.state_2d[2][2];
+	          shift_out_2d[2][1] = this.state_2d[2][3];
+            shift_out_2d[2][2] = this.state_2d[2][0];
+            shift_out_2d[2][3] = this.state_2d[2][1];
+           end
+          else if (i ==3) 
+           begin
+		        shift_out_2d[3][0] = this.state_2d[3][3];
+            shift_out_2d[3][1] = this.state_2d[3][0];
+            shift_out_2d[3][2] = this.state_2d[3][1];
+            shift_out_2d[3][3] = this.state_2d[3][2];
+           end
+//        $display("sft: %x",shift_out_2d[i][j]);
+				end 
+
 	endfunction
 	
 	
@@ -105,6 +155,6 @@ begin
 	
 	encTst.init();
 	encTst.mix_columns();
-
+	encTst.ShiftRows();
 end 
 endmodule
