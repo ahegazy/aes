@@ -60,6 +60,8 @@ begin
 				state_out[(i*8 + 64)+:8] <= (state[(i*8)+:8]) ^ (state[(i*8 + 32)+:8]) ^ MultiplyByTwo(state[(i*8 + 64)+:8] )^ MultiplyByThree(state[(i*8 + 96)+:8]);
 				state_out[(i*8 + 96)+:8] <= MultiplyByThree(state[(i*8)+:8]) ^ (state[(i*8 + 32)+:8]) ^ (state[(i*8 + 64)+:8] )^MultiplyByTwo(state[(i*8 + 96)+:8]);
 			end 
+			
+			done = 1;
 
 			end
 end
