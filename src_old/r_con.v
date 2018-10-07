@@ -1,3 +1,14 @@
+/*
+*
+*	Creator : Moemen alaa <github.com/moemenalaa>
+*
+*	Date: September 2018
+* 
+* Description: r_con Lookup table used in AES encryption/Decryption.
+* Language: Verilog
+*
+*/
+
 module rcon(
 input [3:0] r,
 output reg [31:0] rcon // output reg [3:0]  rcon [7:0] // can't do that ._. 

@@ -1,3 +1,13 @@
+/*
+*
+*	Creator : Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
+*
+*	Date: September 2018
+* 
+* Description: AES Encryption Top module using FSM to move around the processes' steps.
+* Language: Verilog
+*
+*/
 module AES_encryption
 (
 input [7:0] key_byte, state_byte,

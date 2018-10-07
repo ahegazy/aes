@@ -1,3 +1,14 @@
+/*
+*
+*	Creator : Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
+*
+*	Date: September 2018
+* 
+* Description: substitue a single byte using the s_box step in AES encryption/Decryption.
+* Language: Verilog
+*
+*/
+
 module subByte
 	(
 	input wire [31:0] state,

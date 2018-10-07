@@ -1,3 +1,14 @@
+/*
+*
+*	Creator : Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
+*
+*	Date: September 2018
+* 
+* Description: AES Encryption Verilog TestBench.
+* Language: Verilog
+*
+*/
+
 `timescale 10ns/1ns
 module encryption_TB;
 

@@ -1,3 +1,16 @@
+/*
+*
+*	Creator : Ahmad Adel <github.com/ahmadadel8>
+*						Dina  Elsokary <github.com/dinaelsokary>
+*
+* Contributer: Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
+*	Date: September 2018
+* 
+* Description: AddRoundKey step in AES encryption/Decryption.
+* Language: Verilog
+*
+*/
+
 module AddRoundKey
 	#(parameter word_size =8 ,array_size =16)(
 	input wire [word_size*array_size-1:0] key ,

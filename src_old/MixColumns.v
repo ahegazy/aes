@@ -1,3 +1,15 @@
+/*
+*
+*	Creator : Ahmad Adel <github.com/ahmadadel8>
+*						Dina  Elsokary <github.com/dinaelsokary>
+*
+* Contributer: Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
+*	Date: September 2018
+* 
+* Description: Mix columns step in AES encryption/Decryption.
+* Language: Verilog
+*
+*/
 module MixColumns
 	#(parameter word_size =8 ,array_size =16)
 	(

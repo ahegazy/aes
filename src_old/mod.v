@@ -1,4 +1,14 @@
-
+/*
+*
+*	Creator : Ahmad Adel <github.com/ahmadadel8>
+*						Dina  Elsokary <github.com/dinaelsokary>
+*
+*	Date: September 2018
+* 
+* Description: Calculates mod used in MixColumns.
+* Language: Verilog
+*
+*/
 
 task Mod;
 input  [14:0]x;

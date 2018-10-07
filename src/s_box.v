@@ -1,3 +1,13 @@
+/*
+*
+*	Creator : Moemen alaa <github.com/moemenalaa>
+*
+*	Date: September 2018
+* 
+* Description: Substitute box Lookup table used in AES encryption/Decryption.
+* Language: Verilog
+*
+*/
 module s_box(input [7:0] a,output reg [7:0] c);
 
 /* s_box */

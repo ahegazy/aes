@@ -1,3 +1,14 @@
+/*
+*
+*	Creator : Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
+*
+*	Date: October 2018
+* 
+* Description: AES Encryption SystemVerilog TestBench Class.
+* Language: SystemVerilog
+*
+*/
+
 class AES_ENC;
 
 	reg [127:0] state,key;

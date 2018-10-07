@@ -1,3 +1,14 @@
+/*
+*
+*	Creator : Moemen alaa <github.com/moemenalaa>
+*
+*	Date: September 2018
+* 
+* Description: inverse Substitute box Lookup table used in AES encryption/Decryption.
+* Language: Verilog
+*
+*/
+
 module s_box_inv(input [7:0] i,output reg [7:0] g);
 
 /* s_box_inverse */

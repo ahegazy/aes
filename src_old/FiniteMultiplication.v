@@ -1,3 +1,14 @@
+/*
+*
+*	Creator : Ahmad Adel <github.com/ahmadadel8>
+*						Dina  Elsokary <github.com/dinaelsokary>
+*
+*	Date: September 2018
+* 
+* Description: finite multiplication used in MixColumns.
+* Language: Verilog
+*
+*/
 task finite_multiplication;
 input [7:0] A ;
 input [7:0] B ;

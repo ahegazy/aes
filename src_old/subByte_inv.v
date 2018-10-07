@@ -1,3 +1,14 @@
+/*
+*
+*	Creator : Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
+*
+*	Date: September 2018
+* 
+* Description: substitue a single byte using the inverse substitue box step in AES encryption/Decryption.
+* Language: Verilog
+*
+*/
+
 module subByte_inv
 	(
 	input wire [31:0] state,

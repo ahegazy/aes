@@ -1,3 +1,13 @@
+/*
+*
+*	Creator : Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
+*
+*	Date: September 2018
+* 
+* Description: Expand only a single key in AES encryption/Decryption.
+* Language: Verilog
+*
+*/
 module singleKeyExpansion( 
   input  [127:0] keyInput ,
 	input clk,

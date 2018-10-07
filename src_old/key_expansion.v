@@ -1,3 +1,15 @@
+/*
+*
+*	Creator : EsraaGaber <github.com/EsraaGaber>
+*
+* Contributer: Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
+*
+*	Date: September 2018
+* 
+* Description: Key Expansion step in AES encryption/Decryption.
+* Language: Verilog
+*
+*/
 module key_expansion( 
   input  [127:0] key_0 ,
 	input clk,

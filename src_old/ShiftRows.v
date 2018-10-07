@@ -1,3 +1,16 @@
+/*
+*
+*	Creator : Ahmad Adel <github.com/ahmadadel8>
+*						Dina  Elsokary <github.com/dinaelsokary>
+*
+* Contributer: Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
+*	Date: September 2018
+* 
+* Description: shift rows step in AES encryption/Decryption.
+* Language: Verilog
+*
+*/
+
 module Shift_Rows 
  #(parameter word_size =8 ,array_size =16)(
   input en,clk,rst,
