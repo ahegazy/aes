@@ -101,7 +101,7 @@ class AES_ENC;
 					end
 							$display("ij:%d,%d ,state: %x ",i,j,mix_out_2d[i][j]);
 			end 
-			endfunction
+	endfunction
 
 
 	function void ShiftRows ();//	bit [7:0] state_2d [3:0] [3:0]
@@ -139,6 +139,16 @@ class AES_ENC;
 
 	endfunction
 	
+	function void AddRoundKey ();//	bit [7:0] state_2d [3:0] [3:0], bit [7:0] key_2d [3:0] [3:0]
+		int i,j,k;
+		automatic bit [7:0] state_out_2d [3:0] [3:0];
+ 		for (i=0;i<=3;i++)
+			for(j=0;j<=3;j++)
+			begin 
+				state_out_2d[i][j] = this.key_2d[i][j] ^ this.state_2d[i][j];
+			end 
+	endfunction
+
 	
 endclass: AES_ENC
 
@@ -156,5 +166,6 @@ begin
 	encTst.init();
 	encTst.mix_columns();
 	encTst.ShiftRows();
+	encTst.AddRoundKey();
 end 
 endmodule
