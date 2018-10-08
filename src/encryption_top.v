@@ -28,7 +28,7 @@ output reg load,ready
 	reg [3:0] keyNum;
 	reg loadFinish;
 
-	AddRoundKey S(.key(key_transI),.state(state_transI),.clk(clk),.rst(rst),.enable(enRound),.state_out(state_RoundO),.load(load),.done(fRound));
+	AddRoundKey S(.key(key_transI),.state(state_transI),.clk(clk),.rst(rst),.enable(enRound),.state_out(state_RoundO),.done(fRound));
 
   genvar itr;
 	generate

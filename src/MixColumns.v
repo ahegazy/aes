@@ -13,7 +13,6 @@ module MixColumns(
 	input wire [127:0] state,
 	input  clk,enable, rst,
 	output reg  [127:0]state_out,
-	output reg  [127:0]state_out2,
 	output reg done);
 
 function reg [7:0] MultiplyByTwo;
@@ -64,7 +63,7 @@ begin
 				state_out[(i*32 + 24)+:8]  <= (state[(i*32)+:8])^(state[(i*32 + 8)+:8])^MultiplyByThree(state[(i*32 + 16)+:8])^MultiplyByTwo(state[(i*32 + 24)+:8]);
 			end 
 			
-			done = 1;
-			end
+			done <= 1;
+			end else done <= 0;
 end
 endmodule

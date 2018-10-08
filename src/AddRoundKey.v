@@ -27,10 +27,11 @@ always@(posedge clk)
  if (rst) begin
  state_out=128'd0;
  done <= 0;
+ i <= 0;
  end 
  else if (enable) begin 
 	for ( i=0; i<=15; i=i+1)
-			state_out[i*8  +:  8] <= key[i*8  +:  8] ^ state[i*8  +:  8];
+		state_out[i*8  +:  8] <= key[i*8  +:  8] ^ state[i*8  +:  8];
 
 	done = 1;
 	end 
