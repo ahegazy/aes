@@ -11,9 +11,9 @@
 
 class AES_ENC;
 
-	bit [0:127] key;
-	bit [0:127] state;
-	bit [0:127] state_out;
+	bit [127:0] key;
+	bit [127:0] state;
+	bit [127:0] state_out;
 	
 	protected bit [7:0] polymat [0:3] [0:3];
 	protected bit [7:0] sbox [ bit [7:0] ];	
@@ -21,6 +21,8 @@ class AES_ENC;
 	
 	function new();
 		$display("A new begining ._. ");
+		/* initialize the needed values */
+		this.init();
 	endfunction
 
 	function void init();
@@ -61,7 +63,7 @@ class AES_ENC;
 					while (p != 8'h01);
 				
 					/* 0 is a special case since it has no inverse */
-					this.sbox[8'h00] = 8'h01;
+					this.sbox[8'h00] = 8'h63;
 		endfunction
 		
 		protected function void generate_RCON();		
@@ -148,12 +150,15 @@ class AES_ENC;
 		function bit [7:0] SubByte (	bit [7:0] subitem );//, bit [7:0] key_2d [3:0] [3:0]
 				SubByte = this.sbox[subitem];
 		endfunction
-/*
-		function bit [31:0] SubByte_32 (	bit [31:0] subitem );//, bit [7:0] key_2d [3:0] [3:0]
-			for(int i=0;i<=3;i++)
-				SubByte_32[i*8+:8] = this.SubByte[subitem[i*8+:8]];
+
+		function bit [127:0] SubByte_128 (	bit [127:0] subitem );//, bit [7:0] key_2d [3:0] [3:0]
+			bit [127:0] subitem_out ; 
+			for(int i=0;i<=15;i++)
+					subitem_out[i*8+:8] = this.SubByte(subitem[i*8+:8]);
+					
+			SubByte_128 = subitem_out;
 		endfunction
-*/
+
 		function bit [127:0] mix_columns (bit [127:0] state);//	bit [7:0] state_2d [3:0] [3:0]
 			int i,j,ij,k;
 			automatic bit [7:0] state_2d [0:3] [0:3];
@@ -185,10 +190,10 @@ class AES_ENC;
 						end
 							//	$display("ij:%d,%d ,state: %x ",i,j,mix_out_2d[i][j]);
 				end
-			$display("Mixed data",);				
+		/*	$display("Mixed data",);				
 			for ( i=0; i<=3; i=i+1)
 				$display("%x %x %x %x ",mix_out_2d[i][0],mix_out_2d[i][1],mix_out_2d[i][2],mix_out_2d[i][3]);			
-
+*/
 				//2D to 1D
 
 			for ( i=0; i<=3; i=i+1) 
@@ -244,9 +249,9 @@ class AES_ENC;
            end
 //        $display("sft: %x",shift_out_2d[i][j]);
 				end 
-		$display("shifted data",);				
+	/*	$display("shifted data",);				
 		for ( i=0; i<=3; i=i+1)
-			$display("%x %x %x %x ",shift_out_2d[i][0],shift_out_2d[i][1],shift_out_2d[i][2],shift_out_2d[i][3]);
+			$display("%x %x %x %x ",shift_out_2d[i][0],shift_out_2d[i][1],shift_out_2d[i][2],shift_out_2d[i][3]);*/
     /* 2d to 1d */
 						for ( i=0; i<=3; i=i+1)
 							for ( j=0; j<=3; j=j+1)
@@ -266,6 +271,41 @@ class AES_ENC;
 		AddRoundKey = state_out;
 	endfunction
 
+	function bit [127:0] encrypt();
+		bit [127:0] state_trans;
+		bit [127:0] key_trans;
+
+		state_trans = this.state;
+		key_trans = this.key;
+		$display("initial values: key: %x,state: %x",key_trans,state_trans);
+		$display("-------------------------------------------------------");
+		state_trans = this.AddRoundKey(state_trans,key_trans);
+		$display("after AddRoundKey0: %x",state_trans);
+		$display("-------------------------------------------------------");
+
+		for (int i =1;i<=9;i++)
+		begin 
+			$display("iteration: # %d",i);
+			state_trans = this.SubByte_128(state_trans);
+			$display("after subbyte: %x",state_trans);
+			state_trans = this.ShiftRows(state_trans);
+			$display("after ShiftRows: %x",state_trans);
+			state_trans = this.mix_columns(state_trans);
+			$display("after mix_columns: %x",state_trans);
+			key_trans = this.ExpandKey(key_trans,i);
+			$display("after ExpandKey: %x",key_trans);
+			state_trans = this.AddRoundKey(state_trans,key_trans);
+			$display("after AddRoundKey: %x",state_trans);
+			$display("-------------------------------------------------------");
+		end 
+		
+			state_trans = this.SubByte_128(state_trans);
+			state_trans = this.ShiftRows(state_trans);
+			key_trans = this.ExpandKey(key_trans,10);
+			state_trans = this.AddRoundKey(state_trans,key_trans);
+			
+			this.state_out = state_trans;
+	endfunction
 	
 endclass: AES_ENC
 
@@ -279,14 +319,9 @@ begin
 	encTst = new; 
 	encTst.state = 128'h54776F204F6E65204E696E652054776F;
 	encTst.key = 128'h5468617473206D79204B756E67204675;
-//	encTst.state = 128'h632fafa2eb93c7209f92abcba0c0302b;
 
-	encTst.init();
-	$display("%x",encTst.ExpandKey(encTst.key,1));
-
-	$display("%x",encTst.mix_columns(encTst.state));
-	$display("%x",encTst.ShiftRows(encTst.state));
-	//encTst.AddRoundKey();
+	encTst.encrypt();
+	$display("after encryption: %x",encTst.state_out);
 
 end 
 endmodule
