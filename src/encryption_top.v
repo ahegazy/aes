@@ -109,6 +109,7 @@ always @(posedge clk)
 		enShft <= 0;
 		keyNum <= 0;
 		state_transO <= 0;
+		finish <= 0;
 	end
 	else if( (enable == 1 ) && (loadFinish == 1))
 
@@ -127,6 +128,7 @@ always @(posedge clk)
 							enRound <= 1;
 							enKy <= 1;
 							fsmCount <= 2'b01;
+							finish <= 0;
 					end 
 				2'b01:
 					begin 
@@ -141,6 +143,7 @@ always @(posedge clk)
 							if ( keyNum < 10)  fsmCount <= 8'b10;
 							else fsmCount <= 8'b11;
 						end 			
+							finish <= 0;
 					end 
 				2'b10:
 				begin
@@ -152,10 +155,11 @@ always @(posedge clk)
 							enMx <= 1;
 							fsmCount <= 8'b11;
 						end 
+						finish <= 0;
 				end 
 				2'b11:
 				begin 
-					/* round 1 AddroundKey */
+					/* round AddroundKey */
 						if (fMx == 1 || (fshft == 1 && keyNum >= 10))
 						begin
 						  if(keyNum < 10) state_transI <= state_MixO;
@@ -167,6 +171,7 @@ always @(posedge clk)
 							fsmCount <= 8'b01;
 							keyNum <= keyNum + 1;
 						end 
+						finish <= 0;
 				end 
 //				default: 
 				endcase 		
