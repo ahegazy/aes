@@ -58,7 +58,7 @@ always @(posedge clk)
 		//3rd row , row 2 , 2 shifts left 
 		Shifted_Data [64+:16] <= Data[80+:16];
 		Shifted_Data [80+:16] <= Data[64+:16];
-		//*4th row , row 3 , 3 shifts left 
+		//4th row , row 3 , 3 shifts left 
 		Shifted_Data [96+:8] <= Data[120+:8];
 		Shifted_Data [104+:24] <= Data[96+:24];
 	*/
