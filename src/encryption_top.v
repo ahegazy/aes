@@ -58,43 +58,51 @@ always @(posedge clk)
 			ready<=1'd0;
 			i <= 128;
 			state_out_byte <= 8'h00;
-			j <= 0; 
-
+			j <= 128; 
 		end 
 		else if (enable) 
 		begin
-			
 //Bytes to vector// 
 /////////////////////////
 			if (i>0) begin
+			
 				loadFinish <= 0;
 				load<=1'd1;
 				key[i-1 -: 8]<=key_byte;
 				state[i-1 -: 8]<=state_byte;
-				$display ("%b", key);
-				i<=i-8;
+				i<=i-8;				
 			end 
 			else  
 				begin 
+
 				load<=1'd0;
 				loadFinish <= 1;
+				//j <= 128;
 				end
 /* vector to bytes*/
 		// state_39 to bytes to out  + ready signal  @ finish = 1 ..  
 
 	if(finish)
 				begin
-					if ( j < 128)
+					if ( j > 0)
 					begin 
 						ready <= 1; 
-						state_out_byte <= state_transO [j +: 8]; 
-						j <= j + 8;
+						state_out_byte <= state_transO [j-1 -: 8]; 
+						j <= j - 8;
 					end
 					else 
+					begin 
 						ready <= 0;
+						//i <= 128;
+					end 
 				end 
 
-		end 
+		end
+/*		else 
+		begin
+			i<=128;
+			j<=128;
+		end */
 	end 
 	
 	always @(posedge clk)
@@ -128,7 +136,7 @@ always @(posedge clk)
 							enRound <= 1;
 							enKy <= 1;
 							fsmCount <= 2'b01;
-							finish <= 0;
+							//finish <= 0;
 					end 
 				2'b01:
 					begin 
@@ -143,7 +151,7 @@ always @(posedge clk)
 							if ( keyNum < 10)  fsmCount <= 8'b10;
 							else fsmCount <= 8'b11;
 						end 			
-							finish <= 0;
+						//	finish <= 0;
 					end 
 				2'b10:
 				begin
@@ -155,7 +163,7 @@ always @(posedge clk)
 							enMx <= 1;
 							fsmCount <= 8'b11;
 						end 
-						finish <= 0;
+						//finish <= 0;
 				end 
 				2'b11:
 				begin 
@@ -171,7 +179,7 @@ always @(posedge clk)
 							fsmCount <= 8'b01;
 							keyNum <= keyNum + 1;
 						end 
-						finish <= 0;
+						//finish <= 0;
 				end 
 //				default: 
 				endcase 		
@@ -194,6 +202,3 @@ always @(posedge clk)
 		end 
 
 endmodule
-
-	
-	
