@@ -37,32 +37,30 @@ class aes_monitor_before extends uvm_monitor;
 				0: begin 
 					if(vif.sig_ready==1'b1)
 					begin 
-											/* receiving data state */
-								//$display("i: %d, mon state vif rcvd byte: %x",i,vif.out_state_byte);
-											
-							aes_tx.state_out[i-1 -:8] = vif.out_state_byte;
-							i = i - 8;
-							if(i<=0)
-							begin
-								state = 1;
-								i = 128;
-								//$display("DUT output: %x",aes_tx.state_out);
-
-								//Send the transaction to the analysis port
-								mon_ap_before.write(aes_tx);
-							end 
+							state = 1;
+							i = 128;
 					end
 				end 
-			1:
-					begin 
-						i = 128;
-						if(vif.sig_ready==1'b0)	state = 0;
+				1:
+				begin 
+					/* receiving data state */
+					aes_tx.state_out[i-1 -:8] = vif.out_state_byte;
+					i = i - 8;
+					if(i<=0)
+					begin
+						state = 2;
+						//Send the transaction to the analysis port
+						mon_ap_before.write(aes_tx);
 					end 
+				end
+				2: begin 		
+						/* wait for ready to switch to 0 */
+						if(vif.sig_ready==1'b0)	state = 0;
+						end 					
 				endcase
 					
-				end
-				
-			end
+			end /* end always */
+		end /* end forever */
 		
 	endtask: run_phase
 endclass: aes_monitor_before
@@ -111,47 +109,46 @@ class aes_monitor_after extends uvm_monitor;
 			
 				case(state)
 				0:
-					begin 
+					begin
+						if(vif.sig_enable == 1'b1)	begin 
+							i = 128;
+							state = 1;
+						end
+				end
+				1: begin 
+							aes_tx.state[i-1 -: 8] = vif.in_state_byte;
+							aes_tx.key[i-1 -:8] = vif.in_key_byte;					
+							
+							if(i<120) i = 128;
+							else i = i - 8;
+							
+							if(vif.sig_load == 1'b1)
+							begin
+									/* loading started, go get the data */
+								i = 112;
+								state = 2;
+							end 
+				end 
+				2: begin 
+						/* loading data */
 						aes_tx.state[i-1 -: 8] = vif.in_state_byte;
 						aes_tx.key[i-1 -:8] = vif.in_key_byte;					
-					if(vif.sig_enable == 1'b1)
-					begin
-							i = i - 8;
-						 if( vif.sig_load == 1'b1)
-						 begin 
-							i = 112;
-							state = 1;
-						end 
-						if(i<=0)
-						begin
-						 i = 128;
-						end 
-					end else i = 128; 
-					end
-				1:
-				begin 
-					aes_tx.state[i-1 -: 8] = vif.in_state_byte;
-					aes_tx.key[i-1 -:8] = vif.in_key_byte;
-					i = i - 8;
+						i = i - 8;
 					if(i<=0)
 					begin
-						state = 2;
-						i = 128;
-
+						state = 3;
 						//Predict the result
 						predictor();
 						aes_tx_cg = aes_tx;
 
 						//Coverage
 						aes_cg.sample();
-						
-
+	
 						//Send the transaction to the analysis port
 						mon_ap_after.write(aes_tx);
 					end
-					
 				end 
-				2: begin 
+				3: begin 
 					if ( vif.sig_load == 1'b0) state = 0;
 				end 
 				endcase
