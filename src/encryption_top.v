@@ -110,7 +110,7 @@ always @(posedge clk)
 			end 
 			
 			endcase
-		end /* end if enable */
+		end else fsmState => 0; /* end if enable */
 end 
 	
 	always @(posedge clk)
@@ -123,7 +123,6 @@ end
 		enKy <= 0;
 		enRound <= 0;
 		enShft <= 0;
-		keyNum <= 0;
 		state_transO <= 0;
 		finish <= 0;
 	end
@@ -204,6 +203,16 @@ end
 					enRound <= 0;
 					enShft <= 0;
 				end 
+		end else 
+		begin
+			keyNum <= 0;
+			fsmCount <= 0;
+			enMx <= 0;
+			enKy <= 0;
+			enRound <= 0;
+			enShft <= 0;
+			state_transO <= 0;
+			finish <= 0;
 		end
 		
 
