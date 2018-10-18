@@ -50,10 +50,10 @@ class aes_driver extends uvm_driver#(aes_transaction);
 					end 
 					1: begin 
 						/* state 1 send the enable signal */
-						vif.sig_rst = 1'b0;
-						vif.sig_enable = 1'b1;
-						//vif.sig_rst = aes_tx.reset;
-						//vif.sig_enable = aes_tx.enable;
+						//vif.sig_rst = 1'b0;
+						//vif.sig_enable = 1'b1;
+						vif.sig_rst = aes_tx.reset;
+						vif.sig_enable = aes_tx.enable;
 						FSMstate = 2;
 						i = 128;
 					end
@@ -67,11 +67,11 @@ class aes_driver extends uvm_driver#(aes_transaction);
 					end
 					3: begin
 							/* wait for the ready signal */
-							if (vif.sig_ready == 1 | vif.sig_rst == 1 ) 
+							if (vif.sig_ready == 1) 
 							begin
 								i = 0;
 								FSMstate = 4;
-							end 
+							end else if( vif.sig_rst == 1 | vif.sig_enable == 0) FSMstate = 5;
 					end
 					4: begin
 							/*wait for the state_out to be received in the monitor then get a new random value */	

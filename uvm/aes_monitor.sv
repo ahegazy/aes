@@ -106,10 +106,7 @@ class aes_monitor_after extends uvm_monitor;
 		forever begin
 			@(negedge vif.sig_clock)
 			begin
-				if(vif.sig_enable == 1'b0 | vif.sig_rst == 1'b1)
-				begin
-					state = 0;
-				end 
+
 				case(state)
 				0:
 					begin
@@ -131,6 +128,8 @@ class aes_monitor_after extends uvm_monitor;
 								i = 112;
 								state = 2;
 							end 
+				if(vif.sig_enable == 1'b0 | vif.sig_rst == 1'b1) state = 0;
+							
 				end 
 				2: begin 
 						/* loading data */
