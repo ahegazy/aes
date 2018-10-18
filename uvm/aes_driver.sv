@@ -25,7 +25,7 @@ class aes_driver extends uvm_driver#(aes_transaction);
 		vif.in_key_byte = 8'b0;
 		vif.in_state_byte = 8'b0;
 		vif.sig_enable = 1'b0;
-		vif.sig_rst = 1'b0;
+		vif.sig_rst = 1'b1; /* starting restting*/
 		
 		forever begin
 		/* 0: send reset & get next item >> 1: send enable signal and get into FSM */
@@ -34,7 +34,7 @@ class aes_driver extends uvm_driver#(aes_transaction);
 				// get sequencer next random item  ..  
 				seq_item_port.get_next_item(aes_tx);
 				FSMstate = 0;
-				// `uvm_info("aes_driver", aes_tx.sprint(), UVM_LOW);
+				//`uvm_info("aes_driver", aes_tx.sprint(), UVM_LOW);
 			end
 
 			@(posedge vif.sig_clock)
@@ -52,6 +52,8 @@ class aes_driver extends uvm_driver#(aes_transaction);
 						/* state 1 send the enable signal */
 						vif.sig_rst = 1'b0;
 						vif.sig_enable = 1'b1;
+						//vif.sig_rst = aes_tx.reset;
+						//vif.sig_enable = aes_tx.enable;
 						FSMstate = 2;
 						i = 128;
 					end
@@ -65,7 +67,7 @@ class aes_driver extends uvm_driver#(aes_transaction);
 					end
 					3: begin
 							/* wait for the ready signal */
-							if (vif.sig_ready == 1) 
+							if (vif.sig_ready == 1 | vif.sig_rst == 1 ) 
 							begin
 								i = 0;
 								FSMstate = 4;
@@ -81,7 +83,7 @@ class aes_driver extends uvm_driver#(aes_transaction);
 							end 
 					5 : begin
 								FSMstate = 0;
-								vif.sig_enable = 1'b0;
+//								vif.sig_enable = 1'b0;
 								cycle = 0;
 								seq_item_port.item_done();
 					end

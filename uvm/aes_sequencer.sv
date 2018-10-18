@@ -2,6 +2,8 @@ class aes_transaction extends uvm_sequence_item;
 
 	rand bit[127:0] state;
 	rand bit[127:0] key;
+	rand bit enable;
+	rand bit reset;
 	bit[127:0] state_out;
 
 	function new(string name = "");
@@ -12,6 +14,8 @@ class aes_transaction extends uvm_sequence_item;
 	
 		`uvm_field_int(state, UVM_ALL_ON)
 		`uvm_field_int(key, UVM_ALL_ON)
+		`uvm_field_int(enable, UVM_ALL_ON)
+		`uvm_field_int(reset, UVM_ALL_ON)
 		`uvm_field_int(state_out, UVM_ALL_ON)
 	
 	`uvm_object_utils_end
