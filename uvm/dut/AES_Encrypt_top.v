@@ -110,7 +110,7 @@ always @(posedge clk)
 			end 
 			
 			endcase
-		end else fsmState => 0; /* end if enable */
+		end else fsmState <= 0; /* end if enable */
 end 
 	
 	always @(posedge clk)
