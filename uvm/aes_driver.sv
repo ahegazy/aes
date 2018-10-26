@@ -50,10 +50,11 @@ class aes_driver extends uvm_driver#(aes_transaction);
 					end 
 					1: begin 
 						/* state 1 send the enable signal */
-						//vif.sig_rst = 1'b0;
-						//vif.sig_enable = 1'b1;
-						vif.sig_rst = aes_tx.reset;
-						vif.sig_enable = aes_tx.enable;
+						vif.sig_rst = 1'b0;
+						vif.sig_enable = 1'b1;
+						/* for randomizing reset and enable signals */
+						//vif.sig_rst = aes_tx.reset; 
+						//vif.sig_enable = aes_tx.enable;
 						FSMstate = 2;
 						i = 128;
 					end
