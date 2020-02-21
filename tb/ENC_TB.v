@@ -25,6 +25,8 @@ wire load,ready;
 /* instance */
 AES_encryption AES_TB(key_byte, state_byte,clk,rst,enable,state_out_byte,load,ready);
 
+reg startSend;
+
 /*Initializing inputs*/
 initial 
 begin 
@@ -34,6 +36,7 @@ begin
   key_byte = 0;
   state_byte =0;
 	enable = 0;
+	startSend=0;
 end 
 
 
@@ -72,7 +75,7 @@ integer i;
 
 always @(negedge clk)
 begin 
-	if ( enable && (i > 0) )
+	if ( startSend && (i > 0) )
 	begin 
 		key_byte <= full_key[i-:8];
 		state_byte <= full_state[i-:8];
@@ -105,6 +108,8 @@ begin
   begin
 	#2;
 		enable = 1;
+	#2; /*wait one cycle because datsa is recieved in the design after one cycle of the enable signal is set*/
+		startSend = 1;
 		@(ready) 
 			begin 
 				#35;
