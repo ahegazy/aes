@@ -19,8 +19,8 @@ always @(posedge clk)
   begin
     if (rst)
 		begin
-	       Shifted_Data = 128'b0;
-				 done = 0;
+	       Shifted_Data <= 128'b0;
+				 done <= 0;
 		end
   else if (en) begin
 		/* in the DATA .. the arranging is columns filled 1st  ._. */
@@ -62,7 +62,7 @@ always @(posedge clk)
 		Shifted_Data [96+:8] <= Data[120+:8];
 		Shifted_Data [104+:24] <= Data[96+:24];
 	*/
-		done = 1;
+		done <= 1;
 	end		
 	else done <= 0;
 end

@@ -26,7 +26,7 @@ module singleKeyExpansion(
 	 always @(negedge clk)
 	 begin 
 		if(enable)
-			stp1 	<= { keyInput[25:0] , keyInput[31:24] }; 
+			stp1 	<= { keyInput[23:0] , keyInput[31:24] }; 
 	 end 
 
 always @(posedge clk) 

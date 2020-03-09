@@ -155,8 +155,8 @@ end
 							enKy <= 0;
 							enRound <= 0;
 							enShft <= 1;
-							if ( keyNum < 10)  fsmCount <= 8'b10;
-							else fsmCount <= 8'b11;
+							if ( keyNum < 10)  fsmCount <= 2'b10;
+							else fsmCount <= 2'b11;
 						end 			
 						finish <= 0;
 					end 
@@ -168,7 +168,7 @@ end
 							state_transI <= state_ShiftO;
 							enShft <= 0;
 							enMx <= 1;
-							fsmCount <= 8'b11;
+							fsmCount <= 2'b11;
 						end 
 						finish <= 0;
 				end 
@@ -183,7 +183,7 @@ end
 							enShft <= 0;
 							enKy <= 1;
 							enRound <= 1;
-							fsmCount <= 8'b01;
+							fsmCount <= 2'b01;
 							keyNum <= keyNum + 1;
 						end 
 						finish <= 0;
