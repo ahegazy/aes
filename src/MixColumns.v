@@ -15,7 +15,7 @@ module MixColumns(
 	output reg  [127:0]state_out,
 	output reg done);
 
-function reg [7:0] MultiplyByTwo;
+function [7:0] MultiplyByTwo;
 	input [7:0] x;
 	begin 
 			/* multiplication by 2 is shifting on bit to the left, and if the original 8 bits had a 1 @ MSB, xor the result with 0001 1011*/
@@ -24,7 +24,7 @@ function reg [7:0] MultiplyByTwo;
 	end 	
 endfunction
 
-function reg [7:0] MultiplyByThree;
+function [7:0] MultiplyByThree;
 	input [7:0] x;
 	begin 
 			/* multiplication by 3 ,= 01 ^ 10 = (NUM * 01) XOR (NUM * 10) = (NUM) XOR (NUM Muliplication by 2) */
