@@ -1,8 +1,10 @@
 /*
 *
-*
+* Author: Ahmad Hegazy <https://github.com/ahegazy>
 * Date: September 2018
 * Modified : October 2018
+* Formal verification : May 2020
+*
 * Description: AddRoundKey step in AES encryption/Decryption.
 * Language: Verilog
 *
@@ -41,5 +43,45 @@ module AddRoundKey(
         else done <= 0;
     end
 
+
+
+`ifdef FORMAL
+
+    reg f_past_valid; // to know if the $past value is valid to process
+    initial f_past_valid = 0;
+
+    initial assume(rst);
+
+
+    always @(posedge clk)
+        f_past_valid = 1;
+
+    // sync reset
+    // the design starts at reset state so if no f_past_valid it should be on reset
+    // if the past cycle had reset then it should be in reset state
+    always @(posedge clk)
+        if(!f_past_valid || $past(rst))
+        begin
+            assert(state_out == 128'd0);
+            assert(done == 1'b0);
+        end
+
+
+    // sync enable
+
+    // if enable is valid 
+    // assume stable input key == $past(key) and state == $past(state) 
+    always @(posedge clk)
+        if(enable || $past(enable))
+            assume($stable(state));
+    always @(posedge clk)
+        if(enable || $past(enable))
+            assume($stable(key));
+        
+    always @(posedge clk)
+        if(done)
+            assert(state_out == key^state);
+
+`endif
 endmodule
 

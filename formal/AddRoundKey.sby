@@ -1,0 +1,12 @@
+[options]
+mode prove
+
+[engines]
+smtbmc
+
+[script]
+read -formal ../src/AddRoundKey.v
+prep -top AddRoundKey
+
+[files]
+../src/AddRoundKey.v

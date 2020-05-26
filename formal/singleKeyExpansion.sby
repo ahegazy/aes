@@ -1,0 +1,15 @@
+[options]
+mode prove
+
+[engines]
+smtbmc
+
+[script]
+read -formal singleKeyExpansion.v s_box.v r_con.v subBytes.v
+prep -top singleKeyExpansion
+
+[files]
+singleKeyExpansion.v
+s_box.v
+r_con.v
+subBytes.v 

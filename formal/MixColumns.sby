@@ -1,0 +1,12 @@
+[options]
+mode prove
+
+[engines]
+smtbmc
+
+[script]
+read -formal MixColumns.v
+prep -top MixColumns
+
+[files]
+MixColumns.v

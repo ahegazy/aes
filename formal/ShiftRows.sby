@@ -1,0 +1,12 @@
+[options]
+mode prove
+
+[engines]
+smtbmc
+
+[script]
+read -formal ShiftRows.v
+prep -top Shift_Rows
+
+[files]
+ShiftRows.v

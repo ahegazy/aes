@@ -1,8 +1,9 @@
 /*
 *
-*
+*   Author: Ahmad Hegazy <https://github.com/ahegazy>
 *	Date: September 2018
-* 
+*   FORMAL: MAY 2020
+*
 * Description: AES Encryption Top module using FSM to move around the processes' steps.
 * Language: Verilog
 *
@@ -256,5 +257,103 @@ always @(posedge clk)
 		
 
 		end 
+
+
+`ifdef FORMAL
+
+    reg f_past_valid; // to know if the $past value is valid to process
+    initial f_past_valid = 0;
+
+    initial assume(rst);
+
+
+    always @(posedge clk)
+        f_past_valid = 1;
+
+    // sync reset
+    // the design starts at reset state so if no f_past_valid it should be on reset
+    // if the past cycle had reset then it should be in reset state
+    always @(posedge clk)
+        if(!f_past_valid || $past(rst))
+        begin
+            assert(state_out_byte == 8'd0);
+            assert(load == 1'b0);
+            assert(ready == 1'b0);
+        end
+
+
+    // sync enable
+
+    // enable signal should be up for the circuit to work  
+    always @(posedge clk)
+        assume(enable);
+ 
+    // assume never reset 
+//    always @(posedge clk)
+//        assume(!rst);
+
+    // check that not all modules enabled at the same time 
+    always @(*)
+        if(enRound)
+        begin
+            assert(!enShft);
+            assert(!enMx);
+        end
+    
+    always @(*)
+        if(enMx)
+        begin
+            assert(!enRound);
+            assert(!enShft);
+        end
+    
+    always @(*)
+        if(enShft)
+        begin
+            assert(!enRound);
+            assert(!enMx);
+        end
+    
+    // when finish check if the ready flag is raised for the out to receive the data
+    always @(posedge clk)
+        if(f_past_valid && $past(finish) == 1'b1 && !$past(rst))
+            assert(ready);
+
+
+/*
+    // assume an intermediate state after getting the inputs
+    (* anyconst *) wire [127:0] keyInt;
+    (* anyconst *) wire [127:0] stateInt;
+
+    reg stateAssumed;
+    initial stateAssumed = 0;
+
+    always @(posedge clk)
+        if(f_past_valid)
+        begin
+            assume(key == keyInt);
+            assume(state == stateInt);
+        end
+    always @(posedge clk)
+        if(f_past_valid && !stateAssumed)
+        begin
+            //assume(load==1'b0);
+            assume(loadFinish == 1'b1);
+            assume(fsmState == 2'd2);
+            stateAssumed <= 1'b1;
+        end
+*/
+    // maximum generated keys 10
+    always @(*)
+        assert(keyNum <= 12);
+
+
+    //key num should be increased by 1
+    // each time single key expansion module is enabled (enKy) the keyNum must be increased by one
+    always @(posedge clk)
+        if(f_past_valid && keyNum > 0 && $rose(enKy) && !$past(rst))
+            assert(keyNum == $past(keyNum)+1);
+`endif
+
 
 endmodule

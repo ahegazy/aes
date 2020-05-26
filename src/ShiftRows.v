@@ -1,8 +1,8 @@
 /*
 *
-*	Author : Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
-*
+*	Author : Ahmad Hegazy <https://github.com/ahegazy>
 *	Date: October 2018
+*   Formal : May 2020
 *
 * Description: ShiftRows step in AES encryption/Decryption.
 * Language: Verilog
@@ -75,6 +75,100 @@ always @(posedge clk)
 	end		
 	else done <= 0;
 end
+
+
+
+
+`ifdef FORMAL
+
+    reg f_past_valid; // to know if the $past value is valid to process
+    initial f_past_valid = 0;
+
+    initial assume(rst);
+
+
+    always @(posedge clk)
+        f_past_valid = 1;
+
+    // sync reset
+    // the design starts at reset Data so if no f_past_valid it should be on reset
+    // if the past cycle had reset then it should be in reset Data
+    always @(posedge clk)
+        if(!f_past_valid || $past(rst))
+        begin
+            assert(Shifted_Data == 128'd0);
+            assert(done == 1'b0);
+        end
+
+
+    // sync enable
+
+    // if enable is valid 
+    // assume stable input Data == $past(Data) 
+    always @(posedge clk)
+        if(en || $past(en))
+            assume($stable(Data));
+
+
+    /* calculate shifted data for formal */
+    function [127:0] shiftRows(input [127:0] Datai);
+        reg [7:0] data [0:3] [0:3];
+        reg [7:0] shifted_data[0:3] [0:3];
+        reg [127:0] shift_fn_out;
+        integer i,j,ij;
+        
+        // 1D to 2D 
+        for ( i=0; i<=3; i=i+1)
+            for ( j=0; j<=3; j=j+1)
+            begin 
+                ij =15-((4*i)+j);
+                data[j][i]=Datai[ij*8  +:  8];
+            end	
+                
+        // row 0 stay as it is 
+        for ( j=0; j<=3; j=j+1)
+            shifted_data[0][j] = data[0][j];
+        
+        // row 1 shifted 1
+        shifted_data[1][0] = data[1][1];
+        shifted_data[1][1] = data[1][2];
+        shifted_data[1][2] = data[1][3];
+        shifted_data[1][3] = data[1][0];
+        
+        // row 2 shifted 2
+        shifted_data[2][0] = data[2][2];
+        shifted_data[2][1] = data[2][3];
+        shifted_data[2][2] = data[2][0];
+        shifted_data[2][3] = data[2][1];
+        
+    //row 3 shifted 3
+        shifted_data[3][0] = data[3][3];
+        shifted_data[3][1] = data[3][0];
+        shifted_data[3][2] = data[3][1];
+        shifted_data[3][3] = data[3][2];
+     
+        // 2D to 1D 
+        for ( i=0; i<=3; i=i+1)
+            for ( j=0; j<=3; j=j+1)
+            begin 
+                ij =15-((4*i)+j);
+                shift_fn_out[ij*8  +:  8]=shifted_data[j][i];
+            end
+
+//return value 
+            shiftRows = shift_fn_out;
+    endfunction
+
+    reg [127:0] f_shifted_Data;
+
+    always @(*)
+        f_shifted_Data = shiftRows(Data);
+
+    always @(posedge clk)
+        if(done)
+            assert(Shifted_Data == f_shifted_Data);
+
+`endif
 
 endmodule
 

@@ -1,0 +1,24 @@
+[options]
+mode prove
+# mode cover
+# depth 50
+# append 10
+
+[engines]
+smtbmc
+
+[script]
+# plugin -a aes -i c/aes.so
+read_verilog ../src/AddRoundKey.v ../src/MixColumns.v ../src/ShiftRows.v ../src/singleKeyExpansion.v ../src/s_box.v ../src/r_con.v ../src/subBytes.v
+read_verilog -formal ../src/encryption_top.v 
+prep -top AES_encryption
+
+[files]
+../src/encryption_top.v
+../src/AddRoundKey.v
+../src/MixColumns.v
+../src/ShiftRows.v
+../src/singleKeyExpansion.v
+../src/s_box.v
+../src/r_con.v
+../src/subBytes.v 

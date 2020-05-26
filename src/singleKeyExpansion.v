@@ -1,7 +1,8 @@
 /*
 *
-*
+*   Author: Ahmad Hegazy <https://github.com/ahegazy>
 *	Date: September 2018
+*   Formal verification: May 2020 
 *
 * Description: Expand only a single key in AES encryption/Decryption.
 * Language: Verilog
@@ -69,6 +70,38 @@ module singleKeyExpansion(
     end
 */
 
+`ifdef FORMAL
+
+    reg f_past_valid; // to know if the $past value is valid to process
+    initial f_past_valid = 0;
+
+    initial assume(reset);
+
+
+    always @(posedge clk)
+        f_past_valid = 1;
+
+    // sync reset
+    // the design starts at reset state so if no f_past_valid it should be on reset
+    // if the past cycle had reset then it should be in reset state
+    always @(posedge clk)
+        if(!f_past_valid || $past(reset))
+            assert(keyOutput == 128'd0);
+
+
+    // sync enable
+
+    // if enable is valid 
+    // assume stable input key == $past(key) and state == $past(state) 
+    always @(posedge clk)
+        if(enable || $past(enable))
+            assume($stable(keyInput));
+    always @(posedge clk)
+        if(enable || $past(enable))
+            assume($stable(keyNum));
+
+
+`endif
 
 endmodule
 
