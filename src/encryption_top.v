@@ -104,6 +104,7 @@ always @(posedge clk)
 						ready <= 1;
 						fsmState <= 3;
 						j <= 128;
+						loadFinish <= 0;
 					end else 
                         begin
                             ready <= 0;
@@ -113,7 +114,7 @@ always @(posedge clk)
 			3: begin
 						/* state 3 send encrypted data byte by byte .. */
 						if ( j > 0)
-						begin 
+						begin
 							ready <= 1; 
 							state_out_byte <= state_transO [j-1 -: 8]; 
 							j <= j - 8;
@@ -123,6 +124,7 @@ always @(posedge clk)
 								ready <= 0;
 								fsmState <= 0;
 						end 
+                        loadFinish <= 0;
 			end 
 			
 			endcase
@@ -223,7 +225,7 @@ always @(posedge clk)
 							enShft <= 0;
 							enKy <= 1;
 							enRound <= 1;
-							fsmCount <= 2'b00; // return to state 0 wait for the load signal
+							fsmCount <= 2'b01; // return to state 1 shift rows
 							keyNum <= keyNum + 1;
 						end 
 						finish <= 0;
@@ -251,7 +253,6 @@ always @(posedge clk)
 			enKy <= 0;
 			enRound <= 0;
 			enShft <= 0;
-			state_transO <= 0;
 			finish <= 0;
 		end
 		
