@@ -1,6 +1,5 @@
 /*
 *
-*	Creator : Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
 *
 *	Date: September 2018
 * 
@@ -11,7 +10,7 @@
 module AES_encryption
 (
 input [7:0] key_byte, state_byte,
-input clk,rst,enable, 
+input clk,rst,enable,
 output reg [7:0] state_out_byte,
 output reg load,ready
 );
@@ -42,6 +41,17 @@ output reg load,ready
 
 	singleKeyExpansion k ( .keyInput(key_transI),.clk (clk),.enable(enKy),.reset (rst),.keyNum (keyNum),.keyOutput(key_transO));
 
+
+    initial load <= 1'b0;
+    initial ready <= 1'b0;
+    initial state_out_byte <= 8'h00;
+
+
+    // 1st FSM (fsmState) for 
+    // state 0 : wait for the enable signal 
+    // state 1 : recieving the data,key byte by byte and store them in a 128 bit registers 
+    // state 2 : send the ready signal when finish
+    // state 3 : send the data out byte by byte
 always @(posedge clk)
 	begin 
 		if (rst) 
@@ -65,6 +75,7 @@ always @(posedge clk)
 				/* state zero, the enable signal arrived, begin recieving data */
 				fsmState <= 1;
 				i <= 128;
+                loadFinish <= 0;
 			end 
 			1:
 			begin 
@@ -92,7 +103,11 @@ always @(posedge clk)
 						ready <= 1;
 						fsmState <= 3;
 						j <= 128;
-					end else ready <= 0; 
+					end else 
+                        begin
+                            ready <= 0;
+                            fsmState <= 2; 
+                        end
 			end 
 			3: begin
 						/* state 3 send encrypted data byte by byte .. */
@@ -112,8 +127,31 @@ always @(posedge clk)
 			endcase
 		end else fsmState <= 0; /* end if enable */
 end 
-	
-	always @(posedge clk)
+
+
+
+    // 2nd FSM (fsmCount) for running the encryption 10 cycles (provide inputs and enable signals to the modules )  
+    // state 0 : wait for the load finish signal to come then run the 1st AddroundKey key 0 
+    // state 1 : run shift rows 
+    // state 2 : run mix columns 
+    // state 3 : run AddRoundKey for the rest of the steps
+
+    // I store a counter of the key number calculated in keyNum register
+    // When it reaches 11, then we finished all the steps
+    // produce the output
+
+    initial 
+    begin 
+		keyNum <= 0;
+		fsmCount <= 0;
+		enMx <= 0;
+		enKy <= 0;
+		enRound <= 0;
+		enShft <= 0;
+		state_transO <= 0;
+		finish <= 0;
+	end
+always @(posedge clk)
 	begin 
 	if (rst)
 	begin 
@@ -127,7 +165,6 @@ end
 		finish <= 0;
 	end
 	else if( (enable == 1 ) && (loadFinish == 1))
-
 	begin 
 			if ( keyNum <= 11 )
 			begin 
@@ -141,7 +178,9 @@ end
 							state_transI <= state;
 							keyNum <= 4'h1;
 							enRound <= 1;
-							enKy <= 1;
+                            enMx <= 0; // disable mix column 
+                            enShft <= 0; // disalbe shift rows
+							enKy <= 1; // enable key expansion to do the 1st key expansion 
 							fsmCount <= 2'b01;
 							finish <= 0;
 					end 
@@ -155,8 +194,8 @@ end
 							enKy <= 0;
 							enRound <= 0;
 							enShft <= 1;
-							if ( keyNum < 10)  fsmCount <= 2'b10;
-							else fsmCount <= 2'b11;
+							if ( keyNum < 10)  fsmCount <= 2'b10; // if we reached the last cycle don't mix columns
+							else fsmCount <= 2'b11; // go to addRoundKey directly 
 						end 			
 						finish <= 0;
 					end 
@@ -183,7 +222,7 @@ end
 							enShft <= 0;
 							enKy <= 1;
 							enRound <= 1;
-							fsmCount <= 2'b01;
+							fsmCount <= 2'b00; // return to state 0 wait for the load signal
 							keyNum <= keyNum + 1;
 						end 
 						finish <= 0;

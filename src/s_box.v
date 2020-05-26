@@ -1,6 +1,5 @@
 /*
 *
-*	Creator : Moemen alaa <github.com/moemenalaa>
 *
 *	Date: September 2018
 * 
@@ -11,7 +10,7 @@
 module s_box(input [7:0] a,output reg [7:0] c);
 
 /* s_box */
-  always @ ( a )
+  always @ ( * )
     case (a)
      8'h00: c=8'h63;
 	   8'h01: c=8'h7c;

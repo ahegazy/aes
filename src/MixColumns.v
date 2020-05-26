@@ -1,9 +1,8 @@
 /*
 *
-*	Creator : Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
 *
 *	Date: October 2018
-* 
+*
 * Description: Mix columns step in AES encryption/Decryption.
 * Language: Verilog
 *
@@ -32,38 +31,49 @@ function [7:0] MultiplyByThree;
 	end 
 endfunction
  
-integer i; 
-	always@(posedge clk) 
+//integer i; 
+
+// separate combinational from sequential logic 
+
+wire [127:0] state_out_comb;
+genvar i;
+
+generate
+for(i=0;i<=3;i=i+1) begin
+ /* 
+ * Mix columns is a matrices muliplication: polynomial matrix state matrix .
+ * for example 
+ *	2	3	1 1     63 09 cd ba
+ *	1	2	3 1     53 60 70 ca
+ *	1	1	2 3     e0 e1 b7 d0
+ * 	3	1	1 2     8c 04 51 e7
+ * But the state bits as input comes serially in a reg [127:0] : 63 53 e0 8c 09 60 e1 04 cd 70 b7 51 ba ca d0 e7  
+ * so instead of multiplying row * column we multiply row * row  and putting the bits in the output state in a column per iteration
+ * 
+ */
+ 
+    assign state_out_comb[i*32+:8]  = MultiplyByTwo(state[(i*32)+:8])^(state[(i*32 + 8)+:8])^(state[(i*32 + 16)+:8])^MultiplyByThree(state[(i*32 + 24)+:8]);
+    assign state_out_comb[(i*32 + 8)+:8] = MultiplyByThree(state[(i*32)+:8])^MultiplyByTwo(state[(i*32 + 8)+:8])^(state[(i*32 + 16)+:8])^(state[(i*32 + 24)+:8]);
+    assign state_out_comb[(i*32 + 16)+:8] = (state[(i*32)+:8])^MultiplyByThree(state[(i*32 + 8)+:8])^MultiplyByTwo(state[(i*32 + 16)+:8])^(state[(i*32 + 24)+:8]);
+    assign state_out_comb[(i*32 + 24)+:8]  = (state[(i*32)+:8])^(state[(i*32 + 8)+:8])^MultiplyByThree(state[(i*32 + 16)+:8])^MultiplyByTwo(state[(i*32 + 24)+:8]);
+end
+endgenerate
+
+initial done <= 0;
+initial state_out <= 0;
+
+always@(posedge clk) 
 begin
 	if (rst)
 	begin
 		state_out<=128'd0;
-		i<= 0;
 		done <= 0;
 	end 
 	else if (enable)
 	begin 
-			for(i=0;i<=3;i=i+1)
-			begin 
-			 /* 
-			 * Mix columns is a matrices muliplication: polynomial matrix state matrix .
-			 * for example 
-			 *	2	3	1 1     63 09 cd ba
-			 *	1	2	3 1     53 60 70 ca
-			 *	1	1	2 3     e0 e1 b7 d0
-			 * 	3	1	1 2     8c 04 51 e7
-			 * But the state bits as input comes serially in a reg [127:0] : 63 53 e0 8c 09 60 e1 04 cd 70 b7 51 ba ca d0 e7  
-			 * so instead of multiplying row * column we multiply row * row  and putting the bits in the output state in a column per iteration
-			 * 
-			 */
-			 
-				state_out[i*32+:8]  <= MultiplyByTwo(state[(i*32)+:8])^(state[(i*32 + 8)+:8])^(state[(i*32 + 16)+:8])^MultiplyByThree(state[(i*32 + 24)+:8]);
-				state_out[(i*32 + 8)+:8] <= MultiplyByThree(state[(i*32)+:8])^MultiplyByTwo(state[(i*32 + 8)+:8])^(state[(i*32 + 16)+:8])^(state[(i*32 + 24)+:8]);
-				state_out[(i*32 + 16)+:8] <= (state[(i*32)+:8])^MultiplyByThree(state[(i*32 + 8)+:8])^MultiplyByTwo(state[(i*32 + 16)+:8])^(state[(i*32 + 24)+:8]);
-				state_out[(i*32 + 24)+:8]  <= (state[(i*32)+:8])^(state[(i*32 + 8)+:8])^MultiplyByThree(state[(i*32 + 16)+:8])^MultiplyByTwo(state[(i*32 + 24)+:8]);
-			end 
-			
-			done <= 1;
-			end else done <= 0;
+        state_out <= state_out_comb;
+        done <= 1;
+	end else done <= 0;
 end
+
 endmodule

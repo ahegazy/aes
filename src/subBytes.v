@@ -1,6 +1,5 @@
 /*
 *
-*	Creator : Ahmad Hegazy <github.com/ahegazy> <ahegazipro@gmail.com>
 *
 *	Date: September 2018
 * 

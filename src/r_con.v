@@ -1,7 +1,5 @@
 /*
 *
-*	Creator : Moemen alaa <github.com/moemenalaa>
-*
 *	Date: September 2018
 * 
 * Description: r_con Lookup table used in AES encryption/Decryption.
@@ -14,7 +12,7 @@ input [3:0] r,
 output reg [31:0] rcon // output reg [3:0]  rcon [7:0] // can't do that ._. 
 );
 
-always @(r)
+always @(*)
  case(r)
     4'h1: rcon=32'h01000000;
     4'h2: rcon=32'h02000000;
