@@ -9,9 +9,9 @@
 *
 */
 
-module MixColumns(
+module mixColumns(
 	input wire [127:0] state,
-	input  clk,enable, rst,
+	input  clk,enable, reset,
 	output reg  [127:0]state_out,
 	output reg done);
 
@@ -65,7 +65,7 @@ initial state_out <= 0;
 
 always@(posedge clk) 
 begin
-	if (rst)
+	if (reset)
 	begin
 		state_out<=128'd0;
 		done <= 0;
@@ -83,7 +83,7 @@ end
     reg f_past_valid; // to know if the $past value is valid to process
     initial f_past_valid = 0;
 
-    initial assume(rst);
+    initial assume(reset);
 
 
     always @(posedge clk)
@@ -93,7 +93,7 @@ end
     // the design starts at reset state so if no f_past_valid it should be on reset
     // if the past cycle had reset then it should be in reset state
     always @(posedge clk)
-        if(!f_past_valid || $past(rst))
+        if(!f_past_valid || $past(reset))
         begin
             assert(state_out == 128'd0);
             assert(done == 1'b0);

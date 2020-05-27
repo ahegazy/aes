@@ -11,36 +11,36 @@
 module AES_encryption
 (
 input [7:0] key_byte, state_byte,
-input clk,rst,enable,
+input clk,reset,enable,
 output reg [7:0] state_out_byte,
 output reg load,ready
 );
 
 	integer i,j;
-	reg [1:0] fsmCount;
-	reg [1:0] fsmState;
+	reg [1:0] encryptionCycleFSM;
+	reg [1:0] dataioFSM;
 	reg [127:0] key, state; /* input */
-	reg enRound,enShft,enMx,enKy;
-	wire fRound,fshft,fMx;
+	reg roundKeyEn,shiftRowsEn,mixColumnsEn,keyExpansionEn;
+	wire roundKeyFinish,shiftRowsFinish,mixColumnsFinish;
 	reg  finish;
-	reg [127:0] state_transI,state_transO;
-	reg [127:0] key_transI;
-	wire [127:0] key_transO,state_RoundO,state_subByteO,state_ShiftO,state_MixO;
+	reg [127:0] modulesStateIn, stateOutput;
+	reg [127:0] modulesKeyIn;
+	wire [127:0] keyExpansionOut,roundKeyStateOut,subByteStateOut,shiftRowsStateOut,mixColumnsStateOut;
 	reg [3:0] keyNum;
 	reg loadFinish;
 
-	AddRoundKey S(.key(key_transI),.state(state_transI),.clk(clk),.rst(rst),.enable(enRound),.state_out(state_RoundO),.done(fRound));
+	addRoundKey addRoundKeyInst(.key(modulesKeyIn),.state(modulesStateIn),.clk(clk),.reset(reset),.enable(roundKeyEn),.state_out(roundKeyStateOut),.done(roundKeyFinish));
 
   genvar itr;
 	generate
 		for (itr = 0 ; itr <= 127; itr = itr+32)
-			subByte statSub (.state(state_RoundO[itr +:32]) , .state_out(state_subByteO[itr +:32]));
+			subByte subByteInst (.state(roundKeyStateOut[itr +:32]) , .state_out(subByteStateOut[itr +:32]));
 	endgenerate
 	
-	Shift_Rows Sft (.en(enShft),.clk(clk),.rst(rst),.Data(state_subByteO),.Shifted_Data(state_ShiftO),.done(fshft) );
-	MixColumns M (.state(state_transI),.clk (clk),.enable(enMx), .rst(rst),.state_out(state_MixO),.done(fMx));
+	shiftRows shiftRowsInst (.enable(shiftRowsEn),.clk(clk),.reset(reset),.Data(subByteStateOut),.Shifted_Data(shiftRowsStateOut),.done(shiftRowsFinish) );
+	mixColumns mixColumnsInst (.state(modulesStateIn),.clk (clk),.enable(mixColumnsEn), .reset(reset),.state_out(mixColumnsStateOut),.done(mixColumnsFinish));
 
-	singleKeyExpansion k ( .keyInput(key_transI),.clk (clk),.enable(enKy),.reset (rst),.keyNum (keyNum),.keyOutput(key_transO));
+	singleKeyExpansion singleKeyExpansionInst ( .keyInput(modulesKeyIn),.clk (clk),.enable(keyExpansionEn),.reset (reset),.keyNum (keyNum),.keyOutput(keyExpansionOut));
 
 
     initial load <= 1'b0;
@@ -48,14 +48,14 @@ output reg load,ready
     initial state_out_byte <= 8'h00;
 
 
-    // 1st FSM (fsmState) for 
+    // 1st FSM (dataioFSM) for 
     // state 0 : wait for the enable signal 
     // state 1 : recieving the data,key byte by byte and store them in a 128 bit registers 
     // state 2 : send the ready signal when finish
     // state 3 : send the data out byte by byte
 always @(posedge clk)
 	begin 
-		if (rst) 
+		if (reset) 
 		begin
 			loadFinish <= 0;
 			key<=128'd0;
@@ -65,16 +65,16 @@ always @(posedge clk)
 			i <= 128;
 			state_out_byte <= 8'h00;
 			j <= 128; 
-			fsmState <= 0 ;
+			dataioFSM <= 0 ;
 		end 
 		else if (enable) 
 		begin
 
-		case(fsmState)
+		case(dataioFSM)
 			0:
 			begin 
 				/* state zero, the enable signal arrived, begin recieving data */
-				fsmState <= 1;
+				dataioFSM <= 1;
 				i <= 128;
                 loadFinish <= 0;
 			end 
@@ -93,7 +93,7 @@ always @(posedge clk)
 					/* loading data finished go to state 2, processing */
 					load<=1'd0;
 					loadFinish <= 1;
-					fsmState <= 2; 
+					dataioFSM <= 2; 
 					end
 			end
 			2: begin 
@@ -102,13 +102,13 @@ always @(posedge clk)
 					begin
 					/* send ready signal, then go to state three sending output bytes */
 						ready <= 1;
-						fsmState <= 3;
+						dataioFSM <= 3;
 						j <= 128;
 						loadFinish <= 0;
 					end else 
                         begin
                             ready <= 0;
-                            fsmState <= 2; 
+                            dataioFSM <= 2; 
                         end
 			end 
 			3: begin
@@ -116,24 +116,24 @@ always @(posedge clk)
 						if ( j > 0)
 						begin
 							ready <= 1; 
-							state_out_byte <= state_transO [j-1 -: 8]; 
+							state_out_byte <= stateOutput [j-1 -: 8]; 
 							j <= j - 8;
 						end 
 						else begin 
 								/* encryption finished, go to state 0 */
 								ready <= 0;
-								fsmState <= 0;
+								dataioFSM <= 0;
 						end 
                         loadFinish <= 0;
 			end 
 			
 			endcase
-		end else fsmState <= 0; /* end if enable */
+		end else dataioFSM <= 0; /* end if enable */
 end 
 
 
 
-    // 2nd FSM (fsmCount) for running the encryption 10 cycles (provide inputs and enable signals to the modules )  
+    // 2nd FSM (encryptionCycleFSM) for running the encryption 10 cycles (provide inputs and enable signals to the modules )  
     // state 0 : wait for the load finish signal to come then run the 1st AddroundKey key 0 
     // state 1 : run shift rows 
     // state 2 : run mix columns 
@@ -146,25 +146,25 @@ end
     initial 
     begin 
 		keyNum <= 0;
-		fsmCount <= 0;
-		enMx <= 0;
-		enKy <= 0;
-		enRound <= 0;
-		enShft <= 0;
-		state_transO <= 0;
+		encryptionCycleFSM <= 0;
+		mixColumnsEn <= 0;
+		keyExpansionEn <= 0;
+		roundKeyEn <= 0;
+		shiftRowsEn <= 0;
+		stateOutput <= 0;
 		finish <= 0;
 	end
 always @(posedge clk)
 	begin 
-	if (rst)
+	if (reset)
 	begin 
 		keyNum <= 0;
-		fsmCount <= 0;
-		enMx <= 0;
-		enKy <= 0;
-		enRound <= 0;
-		enShft <= 0;
-		state_transO <= 0;
+		encryptionCycleFSM <= 0;
+		mixColumnsEn <= 0;
+		keyExpansionEn <= 0;
+		roundKeyEn <= 0;
+		shiftRowsEn <= 0;
+		stateOutput <= 0;
 		finish <= 0;
 	end
 	else if( (enable == 1 ) && (loadFinish == 1))
@@ -173,59 +173,59 @@ always @(posedge clk)
 			begin 
 		/* get here only if the device is enabled and not loading */
 			/* FSM */
-			case (fsmCount)
+			case (encryptionCycleFSM)
 				2'b00:
 					begin 
 					/* round 0 AddroundKey only .. */
-							key_transI <= key;
-							state_transI <= state;
+							modulesKeyIn <= key;
+							modulesStateIn <= state;
 							keyNum <= 4'h1;
-							enRound <= 1;
-                            enMx <= 0; // disable mix column 
-                            enShft <= 0; // disalbe shift rows
-							enKy <= 1; // enable key expansion to do the 1st key expansion 
-							fsmCount <= 2'b01;
+							roundKeyEn <= 1;
+                            mixColumnsEn <= 0; // disable mix column 
+                            shiftRowsEn <= 0; // disalbe shift rows
+							keyExpansionEn <= 1; // enable key expansion to do the 1st key expansion 
+							encryptionCycleFSM <= 2'b01;
 							finish <= 0;
 					end 
 				2'b01:
 					begin 
 					/* round 1 shiftrows */
-						if (fRound == 1)
+						if (roundKeyFinish == 1)
 						begin
-							state_transI <= state_RoundO;
-							key_transI <= key_transO;
-							enKy <= 0;
-							enRound <= 0;
-							enShft <= 1;
-							if ( keyNum < 10)  fsmCount <= 2'b10; // if we reached the last cycle don't mix columns
-							else fsmCount <= 2'b11; // go to addRoundKey directly 
+							modulesStateIn <= roundKeyStateOut;
+							modulesKeyIn <= keyExpansionOut;
+							keyExpansionEn <= 0;
+							roundKeyEn <= 0;
+							shiftRowsEn <= 1;
+							if ( keyNum < 10)  encryptionCycleFSM <= 2'b10; // if we reached the last cycle don't mix columns
+							else encryptionCycleFSM <= 2'b11; // go to addRoundKey directly 
 						end 			
 						finish <= 0;
 					end 
 				2'b10:
 				begin
 					/* round 1 MixColumns */
-						if (fshft == 1)
+						if (shiftRowsFinish == 1)
 						begin
-							state_transI <= state_ShiftO;
-							enShft <= 0;
-							enMx <= 1;
-							fsmCount <= 2'b11;
+							modulesStateIn <= shiftRowsStateOut;
+							shiftRowsEn <= 0;
+							mixColumnsEn <= 1;
+							encryptionCycleFSM <= 2'b11;
 						end 
 						finish <= 0;
 				end 
 				2'b11:
 				begin 
 					/* round AddroundKey */
-						if (fMx == 1 || (fshft == 1 && keyNum >= 10))
+						if (mixColumnsFinish == 1 || (shiftRowsFinish == 1 && keyNum >= 10))
 						begin
-						  if(keyNum < 10) state_transI <= state_MixO;
-							else 	state_transI <= state_ShiftO;
-							enMx <= 0;
-							enShft <= 0;
-							enKy <= 1;
-							enRound <= 1;
-							fsmCount <= 2'b01; // return to state 1 shift rows
+						  if(keyNum < 10) modulesStateIn <= mixColumnsStateOut;
+							else 	modulesStateIn <= shiftRowsStateOut;
+							mixColumnsEn <= 0;
+							shiftRowsEn <= 0;
+							keyExpansionEn <= 1;
+							roundKeyEn <= 1;
+							encryptionCycleFSM <= 2'b01; // return to state 1 shift rows
 							keyNum <= keyNum + 1;
 						end 
 						finish <= 0;
@@ -236,23 +236,23 @@ always @(posedge clk)
 				else 
 				begin 
 					/* keyNum > 10 */
-					state_transO <= state_RoundO;
+					stateOutput <= roundKeyStateOut;
 					finish <= 1;
 					keyNum <= 0;
-					fsmCount <= 0;
-					enMx <= 0;
-					enKy <= 0;
-					enRound <= 0;
-					enShft <= 0;
+					encryptionCycleFSM <= 0;
+					mixColumnsEn <= 0;
+					keyExpansionEn <= 0;
+					roundKeyEn <= 0;
+					shiftRowsEn <= 0;
 				end 
 		end else 
 		begin
 			keyNum <= 0;
-			fsmCount <= 0;
-			enMx <= 0;
-			enKy <= 0;
-			enRound <= 0;
-			enShft <= 0;
+			encryptionCycleFSM <= 0;
+			mixColumnsEn <= 0;
+			keyExpansionEn <= 0;
+			roundKeyEn <= 0;
+			shiftRowsEn <= 0;
 			finish <= 0;
 		end
 		
@@ -265,7 +265,7 @@ always @(posedge clk)
     reg f_past_valid; // to know if the $past value is valid to process
     initial f_past_valid = 0;
 
-    initial assume(rst);
+    initial assume(reset);
 
 
     always @(posedge clk)
@@ -275,7 +275,7 @@ always @(posedge clk)
     // the design starts at reset state so if no f_past_valid it should be on reset
     // if the past cycle had reset then it should be in reset state
     always @(posedge clk)
-        if(!f_past_valid || $past(rst))
+        if(!f_past_valid || $past(reset))
         begin
             assert(state_out_byte == 8'd0);
             assert(load == 1'b0);
@@ -291,33 +291,33 @@ always @(posedge clk)
  
     // assume never reset 
 //    always @(posedge clk)
-//        assume(!rst);
+//        assume(!reset);
 
     // check that not all modules enabled at the same time 
     always @(*)
-        if(enRound)
+        if(roundKeyEn)
         begin
-            assert(!enShft);
-            assert(!enMx);
+            assert(!shiftRowsEn);
+            assert(!mixColumnsEn);
         end
     
     always @(*)
-        if(enMx)
+        if(mixColumnsEn)
         begin
-            assert(!enRound);
-            assert(!enShft);
+            assert(!roundKeyEn);
+            assert(!shiftRowsEn);
         end
     
     always @(*)
-        if(enShft)
+        if(shiftRowsEn)
         begin
-            assert(!enRound);
-            assert(!enMx);
+            assert(!roundKeyEn);
+            assert(!mixColumnsEn);
         end
     
     // when finish check if the ready flag is raised for the out to receive the data
     always @(posedge clk)
-        if(f_past_valid && $past(finish) == 1'b1 && !$past(rst))
+        if(f_past_valid && $past(finish) == 1'b1 && !$past(reset))
             assert(ready);
 
 
@@ -340,7 +340,7 @@ always @(posedge clk)
         begin
             //assume(load==1'b0);
             assume(loadFinish == 1'b1);
-            assume(fsmState == 2'd2);
+            assume(dataioFSM == 2'd2);
             stateAssumed <= 1'b1;
         end
 */
@@ -350,9 +350,9 @@ always @(posedge clk)
 
 
     //key num should be increased by 1
-    // each time single key expansion module is enabled (enKy) the keyNum must be increased by one
+    // each time single key expansion module is enabled (keyExpansionEn) the keyNum must be increased by one
     always @(posedge clk)
-        if(f_past_valid && keyNum > 0 && $rose(enKy) && !$past(rst))
+        if(f_past_valid && keyNum > 0 && $rose(keyExpansionEn) && !$past(reset))
             assert(keyNum == $past(keyNum)+1);
 `endif
 

@@ -8,8 +8,8 @@
 * Language: Verilog
 *
 */
-module Shift_Rows (
-  input en,clk,rst,
+module shiftRows (
+  input enable,clk,reset,
   input  wire  [0:127] Data,
 	output reg  [0:127] Shifted_Data,
 	output reg done );
@@ -63,12 +63,12 @@ initial done <= 0;
 initial Shifted_Data <= 128'b0;
 always @(posedge clk)
   begin
-    if (rst)
+    if (reset)
 		begin
 	       Shifted_Data <= 128'b0;
 		    done <= 0;
 		end
-  else if (en) begin
+  else if (enable) begin
 
 	    Shifted_Data <= Shifted_Data_comb;
 		done <= 1;
@@ -84,7 +84,7 @@ end
     reg f_past_valid; // to know if the $past value is valid to process
     initial f_past_valid = 0;
 
-    initial assume(rst);
+    initial assume(reset);
 
 
     always @(posedge clk)
@@ -94,7 +94,7 @@ end
     // the design starts at reset Data so if no f_past_valid it should be on reset
     // if the past cycle had reset then it should be in reset Data
     always @(posedge clk)
-        if(!f_past_valid || $past(rst))
+        if(!f_past_valid || $past(reset))
         begin
             assert(Shifted_Data == 128'd0);
             assert(done == 1'b0);
@@ -106,7 +106,7 @@ end
     // if enable is valid 
     // assume stable input Data == $past(Data) 
     always @(posedge clk)
-        if(en || $past(en))
+        if(enable || $past(enable))
             assume($stable(Data));
 
 
