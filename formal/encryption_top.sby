@@ -2,7 +2,7 @@
 mode prove
 # mode cover
 # depth 50
-# append 10
+# append 20
 
 [engines]
 smtbmc

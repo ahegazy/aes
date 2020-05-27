@@ -6,7 +6,7 @@ smtbmc
 
 [script]
 read -formal ../src/AddRoundKey.v
-prep -top AddRoundKey
+prep -top addRoundKey
 
 [files]
 ../src/AddRoundKey.v

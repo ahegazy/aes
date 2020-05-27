@@ -6,7 +6,7 @@ smtbmc
 
 [script]
 read -formal ShiftRows.v
-prep -top Shift_Rows
+prep -top shiftRows
 
 [files]
 ShiftRows.v
